@@ -29,6 +29,10 @@ project = File.expand_path('../..', __dir__)
 configuration = JSON.parse(File.read(File.join(project, 'resources/native-mpv/BUILD.json')))
 tag = configuration.fetch('bottleTag')
 raise 'Unsupported runtime bottle platform' unless tag.match?(/\Aarm64_[a-z_]+\z/)
+lock = JSON.parse(File.read(File.join(project, 'resources/native-mpv/BOTTLES.json')))
+raise 'Runtime bottle lock does not match the build target' unless lock['schema'] == 1 &&
+  lock['platform'] == tag && lock.dig('formulae','mpv','version') == configuration.fetch('baseVersion')
+locked_formulae = lock.fetch('formulae')
 env = {'HOMEBREW_NO_AUTO_UPDATE'=>'1', 'HOMEBREW_NO_INSTALL_CLEANUP'=>'1'}
 cache = File.join(project,'.build','native-mpv-bottles',tag)
 stage = File.join(project,'.build',"native-mpv-runtime-#{Process.pid}")
@@ -43,12 +47,8 @@ extract = lambda do |name|
   return formulae.fetch(name).fetch('root') if formulae.key?(name)
   raise 'Invalid dependency formula' unless name.match?(/\A[a-z0-9][a-z0-9+@._-]*\z/)
   puts "Fetching #{name}"; STDOUT.flush
-  # The full official formula endpoint retains older-platform bottles. The
-  # Homebrew 7 CLI API is filtered to the host platform, even with --bottle-tag.
-  metadata = JSON.parse(run(env,'/usr/bin/curl','-q','--fail','--silent','--show-error',
-    '--connect-timeout','15','--max-time','60',"https://formulae.brew.sh/api/formula/#{name}.json"))
-  bottle = metadata.dig('bottle','stable','files',tag)
-  raise "No official #{tag} bottle for #{name}" unless bottle
+  metadata = locked_formulae.fetch(name) { raise "Missing pinned #{tag} bottle for #{name}" }
+  bottle = metadata.fetch('bottle')
   digest = bottle.fetch('sha256'); url = bottle.fetch('url')
   raise 'Invalid official bottle identity' unless digest.match?(/\A[0-9a-f]{64}\z/) &&
     url.start_with?('https://ghcr.io/v2/homebrew/core/') && url.end_with?('/blobs/sha256:'+digest)
@@ -63,12 +63,11 @@ extract = lambda do |name|
   root = File.join(cache,name)
   FileUtils.mkdir_p(root)
   run(env,'/usr/bin/tar','-xzf',archive,'-C',root)
-  revision = metadata.fetch('revision')
-  package_version = metadata.fetch('versions').fetch('stable') + (revision.zero? ? '' : "_#{revision}")
+  package_version = metadata.fetch('packageDirectory')
+  raise "Invalid pinned package directory: #{name}" unless package_version.match?(/\A[0-9A-Za-z][0-9A-Za-z._+-]*\z/)
   package_root = File.join(root,name,package_version)
   raise "Bottle layout unsupported: #{name}" unless File.directory?(package_root)
-  formulae[name] = {'root'=>package_root, 'version'=>metadata.fetch('versions').fetch('stable'),
-    'bottle'=>metadata.dig('bottle','stable','files',tag), 'license'=>metadata['license']}
+  formulae[name] = metadata.merge('root'=>package_root)
   license_source = File.join(package_root,'share','licenses')
   FileUtils.cp_r(license_source,File.join(stage,'licenses',name)) if File.directory?(license_source)
   notice_target = File.join(stage,'licenses',name)

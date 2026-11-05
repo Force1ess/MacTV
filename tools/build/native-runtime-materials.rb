@@ -155,7 +155,13 @@ module NativeRuntimeMaterials
     File.write(manifest,JSON.pretty_generate(report.merge('materialsComplete'=>false))+"\n")
     entries.each do |name, information|
       raise 'Invalid formula name' unless name.match?(/\A[a-z0-9][a-z0-9+@._-]*\z/)
-      roots = Dir.glob(File.join(cache,name,name,'*')).select { |path| File.directory?(path) }
+      package_directory = information['packageDirectory']
+      if package_directory
+        raise "Invalid pinned package directory: #{name}" unless package_directory.match?(/\A[0-9A-Za-z][0-9A-Za-z._+-]*\z/)
+        roots = [File.join(cache,name,name,package_directory)].select { |path| File.directory?(path) }
+      else
+        roots = Dir.glob(File.join(cache,name,name,'*')).select { |path| File.directory?(path) }
+      end
       raise "Ambiguous or missing frozen bottle: #{name}" unless roots.length == 1
       root = File.realpath(roots.first)
       raise 'Bottle escaped cache' unless root.start_with?(cache + '/') && !File.symlink?(roots.first)

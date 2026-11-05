@@ -19,10 +19,10 @@ This workflow does not change repository visibility.
 The ARM `macos-15` runner with Xcode 26.3 prepares the Rime, subtitle, and MPV
 runtimes. MPV is rebuilt with the checked-in CoreAudio fix, pinned build tools,
 verified Vulkan headers, and the base runtime's matching source inventory.
-If the base Homebrew MPV version changes, preparation intentionally fails instead
-of applying an old patch to an unknown version. Review and update the runtime
-recipe before retrying. Homebrew dependencies are downloaded, not installed or
-upgraded by runtime preparation.
+The release uses the MPV and dependency bottles pinned in
+[the runtime lock](../resources/native-mpv/BOTTLES.json). Update the lock and the
+rebuild recipe together when upgrading the runtime. Preparation downloads
+dependencies without installing them system-wide.
 
 Swift tests, plugin checks, source checks, release-version tests, app signing
 verification, and DMG verification must succeed before publication. Artifacts:
