@@ -4,9 +4,9 @@
 
 以下保留 v1 开发接口；新插件可使用异步 API 2。即插即用与独立插件的新设计见
 [Plugin architecture v2](PLUGGABLE-ARCHITECTURE.md)（[中文](PLUGGABLE-ARCHITECTURE.zh-CN.md)）；
-首批独立示例包是相册和 Steam UI；图片源是资源，不是插件。v1 保持兼容，0.3 示例已使用异步 API 2。
+独立示例包是 Steam UI；图片源是资源，不是插件。v1 保持兼容，0.3 示例已使用异步 API 2。
 
-独立插件在 [MacTV-Plugins/main](https://github.com/Force1ess/MacTV-Plugins/tree/main) 开发，相册和 Steam UI 各自可构建和测试。
+独立插件在 [MacTV-Plugins/main](https://github.com/Force1ess/MacTV-Plugins/tree/main) 开发，Steam UI 可独立构建和测试。
 通用图片资源通过 `host.library('photos', input)` 访问；不要在插件中识别或安装图片源插件。
 
 模块提供内容数据与播放描述，MacTV 负责原生界面、焦点和播放。无需为每个站点创建一套 SwiftUI 页面。
@@ -15,7 +15,7 @@
 
 ```sh
 git clone git@github.com:Force1ess/MacTV-Plugins.git
-cd MacTV-Plugins/gallery
+cd MacTV-Plugins/steam
 npm ci
 npm test
 npm run build

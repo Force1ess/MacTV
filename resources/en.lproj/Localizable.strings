@@ -1085,3 +1085,16 @@
 "从 Chrome 导入登录时，开启完全磁盘访问后重新打开 MacTV。" = "To import from Chrome, grant Full Disk Access and reopen MacTV.";
 
 "显示 {0}／{1} 个文件夹" = "Showing {0} of {1} folders";
+
+"响度均衡" = "Loudness Equalization";
+"均衡 MPV 播放时的响度。" = "Even out volume during MPV playback.";
+
+"第 {0} 季" = "Season {0}";
+
+"{0} 季" = "{0} seasons";
+
+"{0} 集" = "{0} episodes";
+
+"特别篇" = "Specials";
+
+"插件必须提供有效的图标和中英文标题" = "Plugins must provide a valid icon and English and Chinese titles.";

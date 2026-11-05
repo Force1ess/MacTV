@@ -17,16 +17,18 @@ const plugin = {
         throw Error('夸克目录读取失败，请检查登录状态：' + response.code);
       }
       const files = response.data.list;
-      const photos = input.media === 'photos';
-      const items = files.filter(file => file.file === false || (file.file === true && (photos
-        ? /\.(jpg|jpeg|png|heic|heif|webp|gif|tif|tiff|bmp|avif)$/i.test(file.file_name)
-        : (file.category === 1 || /\.(mkv|mp4|m4v|mov|avi|webm|ts|m2ts|mts|mpg|mpeg|wmv|flv|rmvb|asf|vob|ogv)$/i.test(file.file_name))))).map(file => {
+      const photosOnly = input.media === 'photos';
+      const isPhoto = /** @param {string} name */ name => /\.(jpg|jpeg|png|heic|heif|webp|gif|tif|tiff|bmp|avif)$/i.test(name);
+      const items = files.filter(file => file.file === false || (file.file === true && (
+        isPhoto(file.file_name) || (!photosOnly && (file.category === 1 || /\.(mkv|mp4|m4v|mov|avi|webm|ts|m2ts|mts|mpg|mpeg|wmv|flv|rmvb|asf|vob|ogv)$/i.test(file.file_name)))
+      ))).map(file => {
         if (!/^[A-Za-z0-9_-]{1,128}$/.test(file.fid) || typeof file.file_name !== 'string' || !file.file_name.trim()) {
           throw Error('夸克返回了无效文件信息');
         }
+        const photo = file.file === true && isPhoto(file.file_name);
         return {id: file.fid, reference: file.fid, title: file.file_name,
-          kind: /** @type {'folder' | 'video' | 'photo'} */ (file.file === false ? 'folder' : photos ? 'photo' : 'video'),
-          preview: photos && typeof file.thumbnail === 'string' ? file.thumbnail : undefined,
+          kind: /** @type {'folder' | 'video' | 'photo'} */ (file.file === false ? 'folder' : photo ? 'photo' : 'video'),
+          preview: photo && typeof file.thumbnail === 'string' ? file.thumbnail : undefined,
           subtitle: file.file === false ? '文件夹' : fileSize(file.size),
           overview: '', source: 'mtv.quark'};
       });

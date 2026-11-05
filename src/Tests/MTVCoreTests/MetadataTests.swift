@@ -4,6 +4,15 @@ import Testing
 @testable import MTVCore
 
 struct MetadataTests {
+  @Test func localizedSeriesSurvivesReopeningTheMetadataStore() throws {
+    let root = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+    defer { try? FileManager.default.removeItem(at: root) }
+    let file = root.appendingPathComponent("matches.json")
+    let candidate = MetadataCandidate(provider: .tmdb, externalID: 321, kind: .series, title: "测试剧集")
+    try MetadataStore(file: file).saveLocalizedSeries([123: candidate])
+    #expect(try MetadataStore(file: file).loadLocalizedSeries()[123] == candidate)
+    #expect(try MetadataStore(file: file).load().isEmpty)
+  }
   @Test func providerParsingKeepsAttributionAndRejectsUnauthorizedImages() throws {
     let data = Data(
       #"[{"show":{"id":84,"name":"Family Guy","premiered":"1999-01-31","summary":"<p>A &amp; B</p>","image":{"medium":"https://static.tvmaze.com/uploads/images/test.jpg"}}}]"#

@@ -15,6 +15,36 @@ public struct MetadataStore {
     file: URL = FileManager.default.homeDirectoryForCurrentUser.appendingPathComponent(
       "Library/Application Support/MTV/Library/matches.json")
   ) { self.file = file }
+  private var localizedSeriesFile: URL {
+    file.deletingPathExtension().appendingPathExtension("zh-series.json")
+  }
+  public func loadLocalizedSeries() throws -> [Int: MetadataCandidate] {
+    let url = localizedSeriesFile
+    guard FileManager.default.fileExists(atPath: url.path) else { return [:] }
+    guard (try url.resourceValues(forKeys: [.fileSizeKey]).fileSize ?? 0) <= 5_000_000 else {
+      throw MTVError.message("Localized series cache is too large")
+    }
+    let records = try JSONDecoder().decode([Int: MetadataCandidate].self, from: Data(contentsOf: url))
+    try Self.validateLocalizedSeries(records)
+    return records
+  }
+  public func saveLocalizedSeries(_ records: [Int: MetadataCandidate]) throws {
+    try Self.validateLocalizedSeries(records)
+    let bytes = try JSONEncoder().encode(records)
+    guard bytes.count <= 5_000_000 else { throw MTVError.message("Localized series cache is too large") }
+    let url = localizedSeriesFile
+    try FileManager.default.createDirectory(at: url.deletingLastPathComponent(), withIntermediateDirectories: true)
+    try bytes.write(to: url, options: .atomic)
+  }
+  private static func validateLocalizedSeries(_ records: [Int: MetadataCandidate]) throws {
+    guard records.count <= 10_000 else { throw MTVError.message("Too many localized series") }
+    for (id, candidate) in records {
+      guard id > 0, candidate.provider == .tmdb, candidate.kind == .series, containsChinese(candidate.title) else {
+        throw MTVError.message("Invalid localized series record")
+      }
+      try candidate.validate()
+    }
+  }
   public func load() throws -> [String: MetadataMatch] {
     guard FileManager.default.fileExists(atPath: file.path) else { return [:] }
     guard (try file.resourceValues(forKeys: [.fileSizeKey]).fileSize ?? 0) <= 5_000_000 else {

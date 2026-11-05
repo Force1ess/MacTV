@@ -6,7 +6,7 @@ struct ExamplePluginLifecycleTests {
   private func example(_ root: URL, name: String, version: String = "1.0") throws {
     let folder = root.appendingPathComponent(name)
     try FileManager.default.createDirectory(at:folder,withIntermediateDirectories:true)
-    let manifest: [String:Any] = ["id":"example."+name,"name":name,"version":version,"apiVersion":1,"entry":"plugin.js","domains":[],"capabilities":["browse"]]
+    let manifest: [String:Any] = ["presentation": ["symbol": "puzzlepiece.extension"], "localizedNames": ["en": "Fixture", "zh-Hans": "样例"], "id":"example."+name,"name":name,"version":version,"apiVersion":1,"entry":"plugin.js","domains":[],"capabilities":["browse"]]
     try JSONSerialization.data(withJSONObject:manifest).write(to:folder.appendingPathComponent("manifest.json"))
     try Data("const plugin={handle(){return {items:[]}}};".utf8).write(to:folder.appendingPathComponent("plugin.js"))
   }

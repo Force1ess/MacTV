@@ -4,9 +4,9 @@
 
 Plugins provide content and playback descriptions. MacTV supplies the native
 interface, focus and playback. A plugin does not need a SwiftUI page or a change
-to the app's Swift source. Gallery and Steam UI are independent API 2
+to the app's Swift source. Steam UI is an independent API 2
 examples in [MacTV-Plugins](https://github.com/Force1ess/MacTV-Plugins/tree/main).
-Clone that repository and develop Gallery or Steam UI independently.
+Clone that repository to develop Steam UI independently.
 The API 2 SDK can also build, test and pack without Xcode or the main repository.
 
 Photo sources are host resources, not plugins. Use `host.library('photos', input)`
@@ -17,7 +17,7 @@ and [native contracts](OPTIONAL-MODULES.md) before adding another resource.
 
 ```sh
 git clone git@github.com:Force1ess/MacTV-Plugins.git
-cd MacTV-Plugins/gallery
+cd MacTV-Plugins/steam
 npm ci
 npm test
 npm run build

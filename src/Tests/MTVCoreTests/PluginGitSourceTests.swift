@@ -12,7 +12,7 @@ private func fixtureGit(_ arguments: [String], at directory: URL) throws {
 private func fixturePackage(_ repository: URL, version: String, script: String) throws {
   let package=repository.appendingPathComponent("plugin")
   try FileManager.default.createDirectory(at:package,withIntermediateDirectories:true)
-  let manifest: [String:Any] = ["id":"community.fixture","name":"Fixture","version":version,"apiVersion":1,"entry":"plugin.js","domains":[],"capabilities":["browse"]]
+  let manifest: [String:Any] = ["presentation": ["symbol": "puzzlepiece.extension"], "localizedNames": ["en": "Fixture", "zh-Hans": "样例"], "id":"community.fixture","name":"Fixture","version":version,"apiVersion":1,"entry":"plugin.js","domains":[],"capabilities":["browse"]]
   try JSONSerialization.data(withJSONObject:manifest).write(to:package.appendingPathComponent("manifest.json"))
   try Data(script.utf8).write(to:package.appendingPathComponent("plugin.js"))
   let catalog: [String:Any] = ["schemaVersion":2,"id":"fixture","name":"Fixture","plugins":[["id":"community.fixture","name":"Fixture","version":version,"apiVersion":1,"directory":"plugin"]]]

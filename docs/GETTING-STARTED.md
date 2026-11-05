@@ -48,8 +48,8 @@ Select a movie or video to play. The playback controls provide speed, audio trac
 
 If your TV's HDMI output cannot be adjusted with system volume keys, use the TV remote or MacTV's playback volume control.
 
-## Gallery and Steam
+## Quark photos and Steam
 
-Open Gallery from Apps to browse connected local and cloud photos. Steam UI opens an installed Steam in Big Picture mode and returns to MacTV when it closes.
+Open photos directly from a Quark Drive folder. Steam UI opens an installed Steam in Big Picture mode and returns to MacTV when it closes.
 
 Use plugin management to install, update, and remove apps, or add another plugin source.

@@ -20,6 +20,21 @@ public enum SubtitlePreference {
     }
     return nil
   }
+  private enum ChineseScript { case simplified, traditional }
+  private static func chineseScript(_ value: String) -> ChineseScript? {
+    let text = value.lowercased()
+    let tokens = Set(text.components(separatedBy: CharacterSet.alphanumerics.inverted))
+    let chinese = language(value) == "zh" || tokens.contains("zh")
+    if !tokens.isDisjoint(with: ["hans", "chs", "sc"]) || text.contains("简体")
+      || text.contains("簡體") || (chinese && !tokens.isDisjoint(with: ["simplified", "cn", "sg"])) {
+      return .simplified
+    }
+    if !tokens.isDisjoint(with: ["hant", "cht", "tc"]) || text.contains("繁体")
+      || text.contains("繁體") || (chinese && !tokens.isDisjoint(with: ["traditional", "tw", "hk", "mo"])) {
+      return .traditional
+    }
+    return nil
+  }
   public static func rank(language: String?, title: String, preferredLanguages: [String] = Locale.preferredLanguages) -> Int {
     let primary = preferredLanguages.first.flatMap(Self.language) ?? "en"
     let ext = (title as NSString).pathExtension.lowercased()
@@ -28,6 +43,15 @@ public enum SubtitlePreference {
       titleLanguage = (title as NSString).deletingPathExtension.components(separatedBy: ".").dropFirst().reversed().compactMap(Self.language).first
     } else { titleLanguage = Self.language(title) }
     let candidate = language.flatMap(Self.language) ?? titleLanguage
+    if primary == "zh" {
+      let script = language.flatMap(chineseScript) ?? chineseScript(title)
+      if candidate == "zh" || (candidate == nil && script != nil) {
+        let preferredScript = preferredLanguages.first.flatMap(chineseScript) ?? .simplified
+        if let script { return script == preferredScript ? -1 : 1 }
+        return 0
+      }
+      return candidate == "en" ? 2 : 3
+    }
     if candidate == primary { return 0 }
     if candidate == "en" { return 1 }
     return 2
@@ -39,7 +63,9 @@ public enum SubtitlePreference {
   }
   public static var playerLanguages: String {
     let primary = Locale.preferredLanguages.first.flatMap(Self.language) ?? "en"
-    let codes = primary == "zh" ? ["zh", "zho", "chi"] : [primary]
+    let script = Locale.preferredLanguages.first.flatMap(chineseScript) ?? .simplified
+    let chinese = script == .simplified ? ["zh-Hans", "zh-CN", "chs"] : ["zh-Hant", "zh-TW", "cht"]
+    let codes = primary == "zh" ? chinese + ["zh", "zho", "chi"] : [primary]
     return (codes + (primary == "en" ? [] : ["en", "eng"]) + ["any"]).joined(separator: ",")
   }
 }

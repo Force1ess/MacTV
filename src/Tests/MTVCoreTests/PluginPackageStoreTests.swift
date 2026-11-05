@@ -5,7 +5,7 @@ import Testing
 struct PluginPackageStoreTests {
   func package(_ directory: URL, id: String = "dev.example.test", version: String = "1.0", domains: [String] = [], script: String = "throw new Error('must not execute during review');") throws {
     try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
-    let manifest: [String: Any] = ["id": id, "name": "External Test", "version": version, "apiVersion": 1,
+    let manifest: [String: Any] = ["presentation": ["symbol": "puzzlepiece.extension"], "localizedNames": ["en": "Fixture", "zh-Hans": "样例"], "id": id, "name": "External Test", "version": version, "apiVersion": 1,
       "entry": "plugin.js", "domains": domains, "capabilities": ["browse"]]
     try JSONSerialization.data(withJSONObject: manifest).write(to: directory.appendingPathComponent("manifest.json"))
     try Data(script.utf8).write(to: directory.appendingPathComponent("plugin.js"))

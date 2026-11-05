@@ -2,8 +2,8 @@ import MTVCore
 import SwiftUI
 
 enum TVSetting: Int, CaseIterable {
-  case sources, addFolder, nas, scan, engine, audio, metadata, fullscreen, accounts, history, plugins, about, appearance, navigation, information
-  var title: String { LT(["影片来源", "添加文件夹", "连接 NAS", "更新影片库", "播放器", "声音输出", "影片识别", "全屏显示", "登录与连接", "观看记录", "管理应用", "使用引导", "外观", "顶部导航", "About MacTV"][rawValue]) }
+  case sources, addFolder, nas, scan, engine, audio, metadata, fullscreen, accounts, history, plugins, about, appearance, navigation, information, loudness
+  var title: String { LT(["影片来源", "添加文件夹", "连接 NAS", "更新影片库", "播放器", "声音输出", "影片识别", "全屏显示", "登录与连接", "观看记录", "管理应用", "使用引导", "外观", "顶部导航", "About MacTV", "响度均衡"][rawValue]) }
   var subtitle: String { LT([
     "管理影片文件夹与 NAS 共享。",
     "选择这台 Mac 或外置硬盘中的影片文件夹。",
@@ -19,12 +19,13 @@ enum TVSetting: Int, CaseIterable {
     "重新了解片库、登录和遥控操作。",
     "选择深色、浅色或跟随系统，调整玻璃效果。",
     "选择顶部常用入口并调整显示顺序。",
-    "Version, film information providers and open-source licenses."
+    "Version, film information providers and open-source licenses.",
+    "均衡 MPV 播放时的响度。"
   ][rawValue]) }
-  var symbol: String { ["rectangle.stack", "folder.badge.plus", "externaldrive.connected.to.line.below", "arrow.clockwise", "play.rectangle", "speaker.wave.2", "sparkles", "arrow.up.left.and.arrow.down.right", "person.crop.circle", "clock", "square.grid.2x2", "questionmark.circle", "circle.lefthalf.filled", "rectangle.topthird.inset.filled", "info.circle"][rawValue] }
+  var symbol: String { ["rectangle.stack", "folder.badge.plus", "externaldrive.connected.to.line.below", "arrow.clockwise", "play.rectangle", "speaker.wave.2", "sparkles", "arrow.up.left.and.arrow.down.right", "person.crop.circle", "clock", "square.grid.2x2", "questionmark.circle", "circle.lefthalf.filled", "rectangle.topthird.inset.filled", "info.circle", "waveform.path"][rawValue] }
   static let groupTitles = ["影音控制", "通用设置", "应用设置"]
   static let groups: [[Self]] = [
-    [.sources, .scan, .audio],
+    [.sources, .scan, .audio, .loudness],
     [.appearance, .fullscreen, .about, .information],
     [.accounts, .plugins, .navigation],
   ]
@@ -90,6 +91,7 @@ struct TVSettings: View {
     case .engine: return model.preferredEngine.title
     case .appearance: return model.appearance.title
     case .audio: return "选择设备"
+    case .loudness: return model.loudnessEqualization ? L("开启") : L("关闭")
     default: return ""
     }
   }

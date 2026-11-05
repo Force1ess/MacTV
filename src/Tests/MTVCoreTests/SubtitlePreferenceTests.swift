@@ -2,6 +2,14 @@ import Testing
 @testable import MTVCore
 
 struct SubtitlePreferenceTests {
+  @Test func simplifiedAndTraditionalAreDistinguishedEvenWithGenericContainerTags() {
+    let titles = ["Traditional Chinese", "中文", "zh-simplified Chinese", "English"]
+    let tags: [String?] = ["chi", "zho", "zh", "eng"]
+    #expect(SubtitlePreference.preferredIndex(languages: tags, titles: titles, preferredLanguages: ["zh-Hans-CN"]) == 2)
+    #expect(SubtitlePreference.preferredIndex(languages: tags, titles: titles, preferredLanguages: ["zh-Hant-TW"]) == 0)
+    #expect(SubtitlePreference.preferredIndex(languages: [nil, nil],
+      titles: ["Film.CHT.ass", "Film.CHS.ass"], preferredLanguages: ["zh-CN"]) == 1)
+  }
   @Test func prefersSystemThenEnglishThenOtherWithStableFallback() {
     #expect(SubtitlePreference.preferredIndex(languages: ["ja", "eng", "chi"], titles: ["A", "B", "C"], preferredLanguages: ["zh-Hans-CN"]) == 2)
     #expect(SubtitlePreference.preferredIndex(languages: ["ja", "eng"], titles: ["A", "B"], preferredLanguages: ["zh-CN"]) == 1)

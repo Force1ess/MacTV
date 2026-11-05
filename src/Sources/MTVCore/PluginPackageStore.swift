@@ -1,3 +1,4 @@
+import AppKit
 import Darwin
 import Foundation
 
@@ -195,6 +196,14 @@ public actor PluginPackageStore {
     try origin?.validate()
     let packages = try installed()
     let (manifest, bytes, script) = try readPackage(directory)
+    guard let symbol = manifest.presentation?.symbol, !symbol.isEmpty,
+      NSImage(systemSymbolName: symbol, accessibilityDescription: nil) != nil,
+      ["en", "zh-Hans"].allSatisfy({ locale in
+        guard let title = manifest.localizedNames?[locale] else { return false }
+        return !title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+      }) else {
+      throw MTVError.message(L("插件必须提供有效的图标和中英文标题"))
+    }
     var notices: [String: Data] = [:]
     for name in ["LICENSE", "LICENSE.txt", "NOTICE", "README.md"] {
       var node = stat()

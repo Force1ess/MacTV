@@ -96,6 +96,7 @@ struct LibraryScanObservation: Codable {
   @Published private(set) var metadataCacheError: String?
   private var metadataRecords: [String: MetadataMatch] = [:]
   private var localizedSeries: [Int: MetadataCandidate] = [:]
+  private var localizedSeriesLoaded = false
   private var seriesLocalizationAttempts: [Int: Date] = [:]
   private var seriesLocalizationTask: Task<Void, Never>?
   private var rawLibrary: [MediaItem] = []
@@ -222,6 +223,8 @@ struct LibraryScanObservation: Codable {
   var revokedMediaSessionScopes = Set<String>()
   @Published var guideInputDevices: InputDeviceInventory?
   @Published var appearance = TVAppearance(rawValue: UserDefaults.standard.string(forKey: "mtv.appearance") ?? "dark") ?? .dark
+  @Published var loudnessEqualization = !CommandLine.arguments.contains("--ui-smoke")
+    && UserDefaults.standard.bool(forKey: "mtv.audio.loudnessEqualization")
   @Published var glassEnabled = UserDefaults.standard.object(forKey: "mtv.glass") as? Bool ?? true
   @Published var appearanceVisible = false
   @Published var appearanceSelection = 0
@@ -1090,7 +1093,7 @@ struct LibraryScanObservation: Codable {
       }
       let installed = try await PluginClient.packages.catalog(developerMode: developer)
       guard pluginCatalogGeneration == attempt else { return }
-      plugins = bundled.plugins + installed.plugins
+      plugins = (bundled.plugins + installed.plugins).filter { $0.id != "community.gallery" }
       pluginIssues = bundled.issues + installed.issues
       if let id = activePlugin?.id { activePlugin = plugins.first { $0.id == id } }
       rebuildFocus()
@@ -1677,6 +1680,8 @@ struct LibraryScanObservation: Codable {
         }
       }
       do {
+        let quarkAccount = plugin.id == "mtv.quark" && moduleSessionAccess == .stored
+          ? try? await CloudPhotos.shared.quarkDirectoryAccount() : nil
         let data = try await PluginClient.execute(
           plugin, action: action, input: input, sessionAccess: moduleSessionAccess)
         guard !Task.isCancelled, moduleGeneration == generation else { return }
@@ -1689,6 +1694,14 @@ struct LibraryScanObservation: Codable {
         }
         moduleNeedsLogin = page.requiresLogin == true
         var normalized = try PluginContentValidator.normalize(page.items, manifest: plugin.manifest)
+        if plugin.id == "mtv.quark", normalized.contains(where: { $0.kind == .photo }) {
+          let photos = try await CloudPhotos.shared.registerQuarkDirectoryPhotos(data, account: quarkAccount)
+          let byID = Dictionary(photos.map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
+          for index in normalized.indices where normalized[index].kind == .photo {
+            guard let item = byID["quark:" + normalized[index].id] else { throw MTVError.message("Invalid Quark photo reference") }
+            normalized[index] = item
+          }
+        }
         for index in normalized.indices where normalized[index].kind == .photo {
           let reference = normalized[index].reference ?? ""
           if plugin.manifest.nativeLibraries?.contains("photos") == true {
@@ -1901,6 +1914,10 @@ struct LibraryScanObservation: Codable {
       metadataRecords = [:]
       notice = "MacTV 匹配缓存未能读取，当前显示原始信息：\(error.localizedDescription)"
     }
+    if MetadataStore.prefersChinese, !localizedSeriesLoaded {
+      localizedSeriesLoaded = true
+      localizedSeries = (try? metadataStore.loadLocalizedSeries()) ?? [:]
+    }
     library = MetadataStore.apply(metadataRecords, to: items, localizedSeries: localizedSeries)
     loadLocalizedSeries()
     libraryCatalog = LibraryCatalog.build(library)
@@ -1958,7 +1975,12 @@ struct LibraryScanObservation: Codable {
           changed = true
         }
       }
-      if changed { self.applyLibraryItems(self.rawLibrary, preservingPosition: true) }
+      if changed {
+        let store = self.metadataStore, records = self.localizedSeries
+        do { try await Task.detached(priority: .utility) { try store.saveLocalizedSeries(records) }.value }
+        catch { launchLog.error("Localized series cache could not be saved") }
+        self.applyLibraryItems(self.rawLibrary, preservingPosition: true)
+      }
     }
   }
   func applyMetadata(item: MediaItem, candidate: MetadataCandidate?) throws {
@@ -2736,6 +2758,11 @@ struct LibraryScanObservation: Codable {
       enginePickerIndex = PlaybackEngineChoice.allCases.firstIndex(of: preferredEngine) ?? 0
       enginePickerVisible = true
     case .audio: presentAudioOutputs()
+    case .loudness:
+      loudnessEqualization.toggle()
+      if !CommandLine.arguments.contains("--ui-smoke") {
+        UserDefaults.standard.set(loudnessEqualization, forKey: "mtv.audio.loudnessEqualization")
+      }
     case .metadata: prepareAutomaticMetadata()
     case .fullscreen: NSApp.keyWindow?.toggleFullScreen(nil)
     case .accounts:

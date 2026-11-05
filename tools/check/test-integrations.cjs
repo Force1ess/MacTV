@@ -33,6 +33,15 @@ assert.equal(cloudPhotos.result.items[0].kind,'photo');
 const originalPhoto = invoke('quark','resolve',{reference:'image123',original:'true',media:'photos'},[{status:200,code:0,data:[{fid:'image123',download_url:'https://dl-pc-zb.drive.quark.cn/image.jpg'}]}],true);
 assert.equal(originalPhoto.result.transport,'original-file');
 checks.quarkPhotoModeFiltersVideosAndReusesOriginalFileAuthorization = true;
+const mixedQuark = invoke('quark','browse',{},[{status:200,code:0,data:{list:[
+ {fid:'img1',file_name:'Cover.webp',file:true,thumbnail:'https://thumb.quark.cn/p.jpg'},
+ {fid:'vid1',file_name:'Film.mkv',file:true,category:1},
+ {fid:'doc1',file_name:'Notes.txt',file:true}
+]},metadata:{_total:3}}],true);
+assert.deepEqual(mixedQuark.result.items.map(item => item.kind), ['photo','video']);
+assert.equal(mixedQuark.result.items[0].preview, 'https://thumb.quark.cn/p.jpg');
+checks.quarkDirectoryIncludesImagesAndVideos = true;
+
 
 const music = invoke('music','search',{query:'example'},[{items:[]}]);
 assert.deepEqual(music.requests,['native:music']);

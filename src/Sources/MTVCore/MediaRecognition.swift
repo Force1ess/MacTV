@@ -268,10 +268,16 @@ public struct LibraryCatalog {
         catalog.children[id] = episodeCards
       }
       let episodeCount = Set(episodes.map { "\($0.localMetadata!.season!):\($0.localMetadata!.episode!):\($0.localMetadata!.episodeEnd ?? $0.localMetadata!.episode!)" }).count
+      let seasonLabel: String
+      if seasons.count == 1, let season = seasons.keys.first {
+        seasonLabel = season == 0 ? L("特别篇") : L("第 \(season) 季")
+      } else {
+        seasonLabel = L("\(seasons.count) 季")
+      }
       catalog.root.append(
         MediaItem(
           id: seriesID, title: title,
-          subtitle: "\(seasons.count) 季 · \(episodeCount) 集",
+          subtitle: seasonLabel + " · " + L("\(episodeCount) 集"),
           overview: first.localMetadata?.seriesOverview ?? "选择季，浏览并播放剧集。",
           poster: first.localMetadata?.seriesPoster ?? first.poster, reference: seriesID,
           kind: .series, localMetadata: episodes.contains(where: { $0.localMetadata?.metadataReadFailed == true }) ? LocalMediaMetadata(metadataReadFailed: true) : nil,

@@ -18,7 +18,7 @@ extension UISmoke {
     do {
       let source = output.appendingPathComponent("owned-recovery-plugin", isDirectory: true)
       try FileManager.default.createDirectory(at: source, withIntermediateDirectories: true)
-      let manifest: [String: Any] = ["id": id, "name": "恢复交互测试", "version": "1.0.0", "apiVersion": 1,
+      let manifest: [String: Any] = ["presentation": ["symbol": "puzzlepiece.extension"], "localizedNames": ["en": "Fixture", "zh-Hans": "样例"], "id": id, "name": "恢复交互测试", "version": "1.0.0", "apiVersion": 1,
         "entry": "plugin.js", "domains": [], "capabilities": ["browse", "search", "folders"]]
       try JSONSerialization.data(withJSONObject: manifest).write(to: source.appendingPathComponent("manifest.json"))
       let code = """

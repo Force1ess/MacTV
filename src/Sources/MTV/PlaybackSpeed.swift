@@ -53,7 +53,6 @@ struct PlaybackSpeedPanel: View {
               .padding(.horizontal, step / 2).offset(y: 15)
             RoundedRectangle(cornerRadius: 16)
               .fill(.primary.opacity(0.14))
-              .overlay { RoundedRectangle(cornerRadius: 16).strokeBorder(.primary.opacity(0.22)) }
               .frame(width: step - 8, height: 62)
               .offset(x: CGFloat(model.playbackSpeedIndex) * step + 4)
               .animation(reduceMotion ? nil : focusAnimation, value: model.playbackSpeedIndex)

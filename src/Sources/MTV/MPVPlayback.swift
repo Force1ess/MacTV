@@ -19,6 +19,7 @@ private actor MPVWorker {
   private var closed = false
   private var startupOffsetMS: Double?
   private var initialAudioSelected = false
+  private var initialSubtitleSelected = false
   private func command(_ values: [String]) throws {
     guard let player, !closed else { throw CancellationError() }
     let strings = values.map { strdup($0) }
@@ -54,7 +55,8 @@ private actor MPVWorker {
     let object:[String:Any]=["basis":"click","handleCreationMS":offset,"events":events,"lastErrorCode":mtv_mpv_playback_error(player)]
     return (try? JSONSerialization.data(withJSONObject:object,options:[.sortedKeys])).map { String(decoding:$0,as:UTF8.self) } ?? "{}"
   }
-  func begin(url: URL, ownedLoopbackURL: URL?, position: Double, rate: Float, volume: Float, fullscreen: Bool, output: AudioOutputDevice?, paused: Bool, benchmarkStart: Double?) throws {
+  func begin(url: URL, ownedLoopbackURL: URL?, position: Double, rate: Float, volume: Float, fullscreen: Bool, output: AudioOutputDevice?, paused: Bool, benchmarkStart: Double?, loudnessEqualization: Bool, automaticSubtitles: Bool) throws {
+    initialSubtitleSelected = !automaticSubtitles
     let ownedNetwork = url == ownedLoopbackURL && url.scheme == "http" && url.host == "127.0.0.1"
       && url.port.map { $0 >= 1024 } == true && url.path.hasPrefix("/original/") && url.query == nil
     guard !closed, url.isFileURL || ownedNetwork, position.isFinite, position >= 0 else { throw MTVError.message(L("本地播放地址或进度无效")) }
@@ -74,6 +76,9 @@ private actor MPVWorker {
       "mute":CommandLine.arguments.contains("--ui-smoke") && !AudioOutputHardware.audibleTest ? "yes":"no",
       "audio-device":output.map { "coreaudio/" + $0.uid } ?? "auto", "pause":paused ? "yes":"no",
       "video-sync":"audio"]
+    if loudnessEqualization {
+      options["af"] = "lavfi=[dynaudnorm=f=100:g=9:m=2:p=0.90]"
+    }
     if ownedNetwork, CommandLine.arguments.contains("--ui-smoke"),
       CommandLine.arguments.contains("--benchmark-no-initial-buffer") {
       options["cache-pause-initial"] = "no"
@@ -86,15 +91,27 @@ private actor MPVWorker {
     try command(["loadfile",url.isFileURL ? url.path : url.absoluteString,"replace"])
   }
   func stats() throws -> MPVPlaybackStats {
-    if !initialAudioSelected,
+    if !initialAudioSelected || !initialSubtitleSelected,
       let tracks = try? JSONSerialization.jsonObject(with: Data(value("track-list").utf8)) as? [[String:Any]] {
       let audio = tracks.filter { $0["type"] as? String == "audio" }
-      if !audio.isEmpty {
+      if !initialAudioSelected, !audio.isEmpty {
         let main = audio.filter { !AudioTrackPreference.isCommentary($0["title"] as? String ?? "") }
         let original = main.first { $0["original"] as? Bool == true || AudioTrackPreference.isOriginal($0["title"] as? String ?? "") }
         let preferred = original ?? main.first { $0["default"] as? Bool == true } ?? main.first
         if let id = preferred?["id"] as? Int { try set("aid",String(id)) }
         initialAudioSelected = true
+      }
+      if !initialSubtitleSelected {
+        let subtitles = tracks.filter { $0["type"] as? String == "sub" }
+        if let index = SubtitlePreference.preferredIndex(
+          languages: subtitles.map { $0["lang"] as? String },
+          titles: subtitles.map { $0["title"] as? String ?? "" }
+        ), let id = subtitles[index]["id"] as? Int {
+          initialSubtitleSelected = true
+          try? set("sid", String(id))
+        } else if (Int(observed("estimated-frame-number")) ?? 0) > 0 {
+          initialSubtitleSelected = true
+        }
       }
     }
     if let player, !closed, mtv_mpv_playback_error(player)<0 {
@@ -125,7 +142,7 @@ private actor MPVWorker {
     return PlaybackTrackMenu(options:options,selectedID:selected,limited:filtered.count > 64)
   }
   func select(subtitles: Bool, id: Int32) throws -> Bool {
-    if !subtitles { initialAudioSelected = true }
+    if subtitles { initialSubtitleSelected = true } else { initialAudioSelected = true }
     guard (subtitles && id == -1) || id > 0 else { return false }
     let property = subtitles ? "sid":"aid", selected = id == -1 ? "no":String(id)
     try set(property,selected)
@@ -182,7 +199,7 @@ private actor MPVWorker {
     work = Task { [weak self] in
       guard let self else { return }
       do {
-        try await worker.begin(url:url,ownedLoopbackURL:ownedLoopbackURL,position:position,rate:rate,volume:volume,fullscreen:fullscreen,output:output,paused:initiallyPaused,benchmarkStart:benchmarkStart)
+        try await worker.begin(url:url,ownedLoopbackURL:ownedLoopbackURL,position:position,rate:rate,volume:volume,fullscreen:fullscreen,output:output,paused:initiallyPaused,benchmarkStart:benchmarkStart,loudnessEqualization:model.loudnessEqualization,automaticSubtitles:!model.hasUserSubtitleChoice)
         for _ in 0..<150 {
           try Task.checkCancellation()
           if let found = NSApp.windows.first(where: { !previous.contains(ObjectIdentifier($0)) && $0.title == AppBrand.name }) {

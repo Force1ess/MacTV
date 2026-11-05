@@ -71,6 +71,19 @@ actor CloudPhotos {
     try register(page,owner:requester,account:account)
     return try page.encoded()
   }
+  func quarkDirectoryAccount() throws -> String {
+    identity(try session(provider()))
+  }
+  func registerQuarkDirectoryPhotos(_ data: Data, account: String?) throws -> [MediaItem] {
+    guard let object = try JSONSerialization.jsonObject(with: data) as? [String: Any],
+      let items = object["items"] as? [[String: Any]] else { throw MTVError.message("Invalid Quark directory") }
+    let photos = items.filter { $0["kind"] as? String == "photo" }
+    guard !photos.isEmpty else { return [] }
+    guard let account, try quarkDirectoryAccount() == account else { throw CancellationError() }
+    let page = try CloudPhotoPage(data: JSONSerialization.data(withJSONObject: ["items": photos]), requester: "mtv.quark")
+    try register(page, owner: "mtv.quark", account: account)
+    return page.items
+  }
   private func register(_ page: CloudPhotoPage, owner: String, account: String) throws {
     guard entries.count + page.items.count <= 32_768 else { throw MTVError.message("Reopen Gallery to refresh this large cloud-photo session.") }
     for item in page.items where item.kind == .photo {

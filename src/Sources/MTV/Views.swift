@@ -69,6 +69,7 @@ private let accent = Color.primary.opacity(0.86)
 }
 
 struct TVButton<Content: View>: View {
+  @Environment(\.colorSchemeContrast) private var contrast
   @Environment(\.accessibilityReduceMotion) private var reduceMotion
   let selected: Bool
   var showsFocusRing = true
@@ -80,13 +81,12 @@ struct TVButton<Content: View>: View {
     Button(action: action) { content().contentShape(Rectangle()) }
       .buttonStyle(.plain).focusable(false)
       .background(
-        selected && showsFocusRing ? Color.primary.opacity(0.10) : .clear, in: RoundedRectangle(cornerRadius: 16)
+        selected && showsFocusRing ? Color.primary.opacity(contrast == .increased ? 0.32 : 0.18) : .clear,
+        in: RoundedRectangle(cornerRadius: 16, style: .continuous)
       )
-      .overlay(
-        RoundedRectangle(cornerRadius: 16).strokeBorder(
-          Color.primary.opacity(selected && showsFocusRing ? 0.75 : 0), lineWidth: 1.5)
-      )
-      .shadow(color: .black.opacity(selected && showsFocusRing ? 0.5 : 0), radius: 22, y: 12)
+      .brightness(selected && showsFocusRing && subtleFocus ? 0.08 : 0)
+      .scaleEffect(selected && showsFocusRing && subtleFocus && !reduceMotion ? 1.025 : 1)
+      .shadow(color: .black.opacity(selected && showsFocusRing ? 0.25 : 0), radius: 12, y: 6)
       .animation(
         reduceMotion ? nil : (subtleFocus ? .timingCurve(0.22, 0.8, 0.25, 1, duration: 0.18) : .spring(response: 0.32, dampingFraction: 0.82)), value: selected
       )
@@ -404,8 +404,9 @@ struct RootView: View {
           }
         }
         .frame(height: 124)
-        .overlay(
-          RoundedRectangle(cornerRadius: 22).strokeBorder(.primary.opacity(selected ? 0.85 : 0.12), lineWidth: selected ? 2 : 0.7))
+        .brightness(selected ? 0.16 : 0)
+        .scaleEffect(selected && !reduceMotion ? 1.035 : 1)
+        .animation(reduceMotion ? nil : .easeOut(duration: 0.18), value: selected)
         .shadow(color: .black.opacity(selected ? 0.5 : 0), radius: 18, y: 8)
         Text(title).font(.system(size: 16, weight: .semibold))
         if unavailable {
@@ -1018,8 +1019,7 @@ struct PlayerScreen: View {
             }
           }
         }.padding(.horizontal, 14).padding(.vertical, 10)
-          .background(.black.opacity(0.2), in: RoundedRectangle(cornerRadius: 18))
-          .overlay(RoundedRectangle(cornerRadius: 18).strokeBorder(.white.opacity(0.12)))
+          .tvGlass(radius: 22)
 
       }.padding(.horizontal, 28).padding(.bottom, 18).padding(.top, 28).background(
         LinearGradient(colors: [.clear, .black.opacity(0.5)], startPoint: .top, endPoint: .bottom)

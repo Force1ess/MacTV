@@ -21,12 +21,13 @@ private struct TVGlassStyle: ViewModifier {
   @Environment(\.tvGlassEnabled) private var enabled
   let radius: CGFloat
   @ViewBuilder func body(content: Content) -> some View {
-    if #available(macOS 26, *), enabled, !reduceTransparency {
-      content.background(TVPalette.surface.opacity(0.82), in: RoundedRectangle(cornerRadius: radius))
-        .glassEffect(.regular, in: RoundedRectangle(cornerRadius: radius))
+    let shape = RoundedRectangle(cornerRadius: radius, style: .continuous)
+    if !enabled || reduceTransparency {
+      content.background(TVPalette.surface, in: shape)
+    } else if #available(macOS 26, *) {
+      content.glassEffect(.regular, in: shape)
     } else {
-      content.background(TVPalette.surface, in: RoundedRectangle(cornerRadius: radius))
-        .overlay(RoundedRectangle(cornerRadius: radius).strokeBorder(.primary.opacity(0.08)))
+      content.background(.regularMaterial, in: shape)
     }
   }
 }
@@ -52,11 +53,9 @@ private struct TVPopupSurface: ViewModifier {
     if !glassEnabled || reduceTransparency {
       content.background(TVPalette.surface, in: shape)
     } else if #available(macOS 26, *) {
-      content.background(TVPalette.surface.opacity(0.16), in: shape)
-        .glassEffect(.regular, in: shape)
+      content.glassEffect(.regular, in: shape)
     } else {
       content.background(.regularMaterial, in: shape)
-        .overlay { shape.strokeBorder(.primary.opacity(0.1)).allowsHitTesting(false) }
         .shadow(color: .black.opacity(0.18), radius: 22, y: 10)
     }
   }

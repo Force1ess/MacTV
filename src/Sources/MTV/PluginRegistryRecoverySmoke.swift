@@ -19,7 +19,7 @@ extension UISmoke {
     do {
       let root = await store.root, source = output.appendingPathComponent("owned-registry-plugin")
       try FileManager.default.createDirectory(at: source, withIntermediateDirectories: true)
-      let manifest: [String: Any] = ["id": id, "name": "安装清单测试模块", "version": "1.0", "apiVersion": 1,
+      let manifest: [String: Any] = ["presentation": ["symbol": "puzzlepiece.extension"], "localizedNames": ["en": "Fixture", "zh-Hans": "样例"], "id": id, "name": "安装清单测试模块", "version": "1.0", "apiVersion": 1,
         "entry": "plugin.js", "domains": [], "capabilities": ["browse"], "presentation": ["showOnHome": true]]
       try JSONSerialization.data(withJSONObject: manifest).write(to: source.appendingPathComponent("manifest.json"))
       try Data("const plugin={handle(action,input){if(input.slow==='1'){const t=Date.now();while(Date.now()-t<20000){}}return {items:[]};}};".utf8)
