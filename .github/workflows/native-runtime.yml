@@ -1,0 +1,46 @@
+name: Native Runtime
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/native-runtime.yml
+      - Makefile
+      - tools/build/prepare-release-runtime.rb
+      - tools/build/package-native-mpv.rb
+      - tools/build/native-runtime-materials.rb
+      - tools/build/rebuild-native-mpv.rb
+      - tools/build/setup-rime-engine.sh
+      - tools/build/setup-subtitle-tool.sh
+      - resources/native-mpv/**
+      - resources/rime/**
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: native-runtime-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  build:
+    if: github.ref == 'refs/heads/main'
+    runs-on: macos-15
+    timeout-minutes: 90
+    env:
+      DEVELOPER_DIR: /Applications/Xcode_26.3.app/Contents/Developer
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/cache@v4
+        id: runtime
+        with:
+          path: |
+            vendor/MPVNativeEngine
+            vendor/RimeEngine
+            vendor/SubtitleTool
+            dist/MacTV-native-runtime-sources.tar.gz
+          key: mactv-runtime-arm64-xcode26.3-${{ hashFiles('Makefile', 'tools/build/prepare-release-runtime.rb', 'tools/build/package-native-mpv.rb', 'tools/build/native-runtime-materials.rb', 'tools/build/rebuild-native-mpv.rb', 'tools/build/setup-rime-engine.sh', 'tools/build/setup-subtitle-tool.sh', 'resources/native-mpv/**', 'resources/rime/**') }}
+      - name: Build the native runtime and corresponding source archive
+        if: steps.runtime.outputs.cache-hit != 'true'
+        run: |
+          test "$(uname -m)" = arm64
+          xcodebuild -version
+          ruby tools/build/prepare-release-runtime.rb
+          test -s dist/MacTV-native-runtime-sources.tar.gz

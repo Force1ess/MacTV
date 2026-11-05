@@ -2,6 +2,12 @@ name: Release
 on:
   push:
     tags: ['v*']
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Version to package for a dry run
+        default: v1.0
+        required: true
 permissions:
   contents: read
 concurrency:
@@ -17,7 +23,7 @@ jobs:
     env:
       DEVELOPER_DIR: /Applications/Xcode_26.3.app/Contents/Developer
       MTV_FILE_SIGNING: '0'
-      MACTV_RELEASE_TAG: ${{ github.ref_name }}
+      MACTV_RELEASE_TAG: ${{ inputs.tag || github.ref_name }}
       MTV_SOURCE_REVISION: ${{ github.sha }}
     steps:
       - uses: actions/checkout@v4
@@ -28,17 +34,24 @@ jobs:
           echo "MACTV_BUILD_NUMBER=$((100 + GITHUB_RUN_NUMBER))" >> "$GITHUB_ENV"
           test "$(uname -m)" = arm64
           xcodebuild -version
-      - uses: actions/setup-node@v4
+      - name: Restore the exact native runtime
+        uses: actions/cache/restore@v4
+        id: runtime
         with:
-          node-version: '22'
-          cache: npm
-          cache-dependency-path: tools/package-lock.json
-      - run: npm --prefix tools ci
-      - run: npm --prefix tools run check:integrations && npm --prefix tools run test:integrations
-      - run: ruby tools/build/prepare-release-runtime.rb
-      - run: bash tools/check/test.sh --no-parallel
-      - run: make check
-      - run: ruby tools/check/test-release-version.rb
+          fail-on-cache-miss: true
+          path: |
+            vendor/MPVNativeEngine
+            vendor/RimeEngine
+            vendor/SubtitleTool
+            dist/MacTV-native-runtime-sources.tar.gz
+          key: mactv-runtime-arm64-xcode26.3-${{ hashFiles('Makefile', 'tools/build/prepare-release-runtime.rb', 'tools/build/package-native-mpv.rb', 'tools/build/native-runtime-materials.rb', 'tools/build/rebuild-native-mpv.rb', 'tools/build/setup-rime-engine.sh', 'tools/build/setup-subtitle-tool.sh', 'resources/native-mpv/**', 'resources/rime/**') }}
+      - name: Verify runtime availability
+        run: |
+          test "${{ steps.runtime.outputs.cache-hit }}" = true
+          test -d vendor/MPVNativeEngine
+          test -d vendor/RimeEngine
+          test -d vendor/SubtitleTool
+          test -s dist/MacTV-native-runtime-sources.tar.gz
       - run: make build
       - name: Package installer and source
         run: |
@@ -54,6 +67,7 @@ jobs:
           if-no-files-found: error
           retention-days: 14
   publish:
+    if: github.event_name == 'push'
     needs: package
     runs-on: ubuntu-latest
     permissions:
