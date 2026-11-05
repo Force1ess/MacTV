@@ -1,0 +1,14 @@
+{
+  "name": "mactv-development",
+  "private": true,
+  "version": "1.0.0",
+  "scripts": {
+    "check:integrations": "tsc --project ../config/typescript.json --noEmit",
+    "test:integrations": "node check/test-integrations.cjs",
+    "build:plugins": "node plugins/packages.mjs build",
+    "test:plugins": "node plugins/packages.mjs test"
+  },
+  "devDependencies": {
+    "typescript": "5.9.3"
+  }
+}

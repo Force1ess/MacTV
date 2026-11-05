@@ -1,0 +1,48 @@
+name: Source checks
+on:
+  push:
+  pull_request:
+permissions:
+  contents: read
+concurrency:
+  group: source-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  source:
+    # ARM hosted jobs repeatedly expired before receiving a runner. Source CI
+    # uses the supported Intel image; Apple Silicon playback is tested on Mini.
+    runs-on: macos-15-intel
+    timeout-minutes: 20
+    env:
+      # New APIs are availability-guarded at runtime, but need the macOS 26 SDK
+      # to compile. macos-15's default Xcode 16.4 cannot resolve those types.
+      DEVELOPER_DIR: /Applications/Xcode_26.3.app/Contents/Developer
+    steps:
+      - uses: actions/checkout@v4
+      - name: Toolchain
+        run: |
+          uname -m
+          xcodebuild -version
+          xcrun --sdk macosx --show-sdk-version
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: tools/package-lock.json
+      - run: npm --prefix tools ci
+      - run: npm --prefix tools run check:integrations
+      - run: npm --prefix tools run test:integrations
+      # Keep all tests, but avoid oversubscribing the small hosted runner with
+      # unrelated filesystem fixtures while testing real socket deadlines.
+      # Individual concurrency/cancellation tests still run their own tasks.
+      - run: bash tools/check/test.sh --no-parallel
+      - run: ruby tools/check/test-source-release.rb
+      - run: ruby tools/check/test-native-runtime-materials.rb
+      - run: ruby tools/check/test-preview-artifacts.rb
+      - run: ruby tools/check/test-release-version.rb
+      - run: ruby tools/check/check-source-release.rb
+      - name: Ruby syntax
+        run: |
+          while IFS= read -r -d '' path; do
+            ruby -c "$path"
+          done < <(find tools -name '*.rb' -print0)

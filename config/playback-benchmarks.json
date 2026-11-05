@@ -1,0 +1,51 @@
+{
+  "schema": 1,
+  "start": "click existing video card",
+  "end": "Verified decoded frame in a visible playback window on the active Space; AVPlayer display-ready notification is separate, native capture must match video dimensions; capture cost included.",
+  "startupP99BudgetMS": 3000,
+  "minimumAttemptsForP99Evaluation": 100,
+  "failuresCountAsDeadlineMisses": true,
+  "strata": [
+    "first measured playback in process",
+    "same-process repeat"
+  ],
+  "providers": [
+    {
+      "plugin": "mtv.bilibili",
+      "session": "guest or own stored session; report separately",
+      "quality": "report actual quality; no reduction to meet latency"
+    },
+    {
+      "plugin": "mtv.quark",
+      "session": "own validated stored session required",
+      "reference": "actual provider folder/file card, or explicit original-file transport; never persist signed media URLs",
+      "startupP99BudgetMS": 7000,
+      "budgetPolicy": "quark-p99-7s-v1"
+    }
+  ],
+  "guardrails": [
+    "time to actual playing",
+    "rebuffer observations",
+    "failure rate",
+    "identical content and quality for comparisons"
+  ],
+  "fourKStartupP99BudgetMS": 6000,
+  "fourKDecodedDimensions": {
+    "minimumLongEdge": 3840,
+    "minimumShortEdge": 1600
+  },
+  "budgetHistory": [
+    {
+      "policy": "decoded-dimensions-v1",
+      "defaultMS": 3000,
+      "decoded4KMS": 6000
+    },
+    {
+      "policy": "quark-p99-7s-v1",
+      "plugin": "mtv.quark",
+      "limitMS": 7000,
+      "userRequested": true,
+      "historicalRecordsAreNotRewritten": true
+    }
+  ]
+}

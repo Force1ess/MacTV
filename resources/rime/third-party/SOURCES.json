@@ -1,0 +1,90 @@
+{
+  "schema": 1,
+  "scope": "Notices from frozen upstream Rime build dependencies; includes upstream test/tool notices without claiming those tools are linked into MacTV.",
+  "librimeCommit": "33e78140250125871856cdc5b42ddc6a5fcd3cd4",
+  "dependencyPinsSource": "https://github.com/rime/librime/tree/33e78140250125871856cdc5b42ddc6a5fcd3cd4/deps",
+  "boostVersionSource": "https://github.com/rime/librime/blob/33e78140250125871856cdc5b42ddc6a5fcd3cd4/.github/workflows/macos-build.yml",
+  "legalReviewComplete": false,
+  "components": [
+    {
+      "name": "glog",
+      "repository": "https://github.com/google/glog",
+      "commit": "7b134a5c82c0c0b5698bb6bf7a835b230c5638e4",
+      "archiveURL": "https://codeload.github.com/google/glog/tar.gz/7b134a5c82c0c0b5698bb6bf7a835b230c5638e4",
+      "archiveSHA256": "9c48c7c631be5af3502a19d06ebdb5c2f67d8d0bf216f896848089c1792e6193",
+      "notices": [
+        "glog/glog-7b134a5c82c0c0b5698bb6bf7a835b230c5638e4.tar.gz%2Fglog-7b134a5c82c0c0b5698bb6bf7a835b230c5638e4%2FAUTHORS",
+        "glog/glog-7b134a5c82c0c0b5698bb6bf7a835b230c5638e4.tar.gz%2Fglog-7b134a5c82c0c0b5698bb6bf7a835b230c5638e4%2FCOPYING",
+        "glog/glog-7b134a5c82c0c0b5698bb6bf7a835b230c5638e4.tar.gz%2Fglog-7b134a5c82c0c0b5698bb6bf7a835b230c5638e4%2FREADME.rst"
+      ]
+    },
+    {
+      "name": "leveldb",
+      "repository": "https://github.com/google/leveldb",
+      "commit": "99b3c03b3284f5886f9ef9a4ef703d57373e61be",
+      "archiveURL": "https://codeload.github.com/google/leveldb/tar.gz/99b3c03b3284f5886f9ef9a4ef703d57373e61be",
+      "archiveSHA256": "bc87b9bbc5674c91246a89813355e78401759761342cc049e1c3d56350a8a9d1",
+      "notices": [
+        "leveldb/leveldb-99b3c03b3284f5886f9ef9a4ef703d57373e61be.tar.gz%2Fleveldb-99b3c03b3284f5886f9ef9a4ef703d57373e61be%2FAUTHORS",
+        "leveldb/leveldb-99b3c03b3284f5886f9ef9a4ef703d57373e61be.tar.gz%2Fleveldb-99b3c03b3284f5886f9ef9a4ef703d57373e61be%2FLICENSE",
+        "leveldb/leveldb-99b3c03b3284f5886f9ef9a4ef703d57373e61be.tar.gz%2Fleveldb-99b3c03b3284f5886f9ef9a4ef703d57373e61be%2FREADME.md.txt"
+      ]
+    },
+    {
+      "name": "marisa-trie",
+      "repository": "https://github.com/s-yata/marisa-trie",
+      "commit": "3e87d53b78e15f2f43783d5e376561a8c9722051",
+      "archiveURL": "https://codeload.github.com/s-yata/marisa-trie/tar.gz/3e87d53b78e15f2f43783d5e376561a8c9722051",
+      "archiveSHA256": "c24516edc43be8049ef4e23e50a574d4670036fe3595c49c0f01d4d87ce58f57",
+      "notices": [
+        "marisa-trie/marisa-trie-3e87d53b78e15f2f43783d5e376561a8c9722051.tar.gz%2Fmarisa-trie-3e87d53b78e15f2f43783d5e376561a8c9722051%2FAUTHORS",
+        "marisa-trie/marisa-trie-3e87d53b78e15f2f43783d5e376561a8c9722051.tar.gz%2Fmarisa-trie-3e87d53b78e15f2f43783d5e376561a8c9722051%2FCOPYING.md.txt",
+        "marisa-trie/marisa-trie-3e87d53b78e15f2f43783d5e376561a8c9722051.tar.gz%2Fmarisa-trie-3e87d53b78e15f2f43783d5e376561a8c9722051%2FREADME.md.txt"
+      ]
+    },
+    {
+      "name": "opencc",
+      "repository": "https://github.com/BYVoid/OpenCC",
+      "commit": "556ed22496d650bd0b13b6c163be9814637970ae",
+      "archiveURL": "https://codeload.github.com/BYVoid/OpenCC/tar.gz/556ed22496d650bd0b13b6c163be9814637970ae",
+      "archiveSHA256": "2792fc0944359c5d099bd79e08bfffce250bf3760aa0ec306e975cc58314482a",
+      "notices": [
+        "opencc/opencc-556ed22496d650bd0b13b6c163be9814637970ae.tar.gz%2FOpenCC-556ed22496d650bd0b13b6c163be9814637970ae%2FAUTHORS",
+        "opencc/opencc-556ed22496d650bd0b13b6c163be9814637970ae.tar.gz%2FOpenCC-556ed22496d650bd0b13b6c163be9814637970ae%2FLICENSE",
+        "opencc/opencc-556ed22496d650bd0b13b6c163be9814637970ae.tar.gz%2FOpenCC-556ed22496d650bd0b13b6c163be9814637970ae%2FREADME.md.txt",
+        "opencc/opencc-556ed22496d650bd0b13b6c163be9814637970ae.tar.gz%2FOpenCC-556ed22496d650bd0b13b6c163be9814637970ae%2Fdeps%2Fgoogle-benchmark%2FAUTHORS",
+        "opencc/opencc-556ed22496d650bd0b13b6c163be9814637970ae.tar.gz%2FOpenCC-556ed22496d650bd0b13b6c163be9814637970ae%2Fdeps%2Fgoogle-benchmark%2FLICENSE",
+        "opencc/opencc-556ed22496d650bd0b13b6c163be9814637970ae.tar.gz%2FOpenCC-556ed22496d650bd0b13b6c163be9814637970ae%2Fdeps%2Fgoogletest-1.15.0%2FLICENSE",
+        "opencc/opencc-556ed22496d650bd0b13b6c163be9814637970ae.tar.gz%2FOpenCC-556ed22496d650bd0b13b6c163be9814637970ae%2Fdeps%2Fmarisa-0.2.6%2FAUTHORS",
+        "opencc/opencc-556ed22496d650bd0b13b6c163be9814637970ae.tar.gz%2FOpenCC-556ed22496d650bd0b13b6c163be9814637970ae%2Fdeps%2Fmarisa-0.2.6%2FCOPYING.md.txt",
+        "opencc/opencc-556ed22496d650bd0b13b6c163be9814637970ae.tar.gz%2FOpenCC-556ed22496d650bd0b13b6c163be9814637970ae%2Fdeps%2Fmarisa-0.2.6%2FREADME.md.txt",
+        "opencc/opencc-556ed22496d650bd0b13b6c163be9814637970ae.tar.gz%2FOpenCC-556ed22496d650bd0b13b6c163be9814637970ae%2Fdeps%2Fpybind11-2.13.1%2FLICENSE",
+        "opencc/opencc-556ed22496d650bd0b13b6c163be9814637970ae.tar.gz%2FOpenCC-556ed22496d650bd0b13b6c163be9814637970ae%2Fdeps%2Fpybind11-2.13.1%2FREADME.rst"
+      ]
+    },
+    {
+      "name": "yaml-cpp",
+      "repository": "https://github.com/jbeder/yaml-cpp",
+      "commit": "2f86d13775d119edbb69af52e5f566fd65c6953b",
+      "archiveURL": "https://codeload.github.com/jbeder/yaml-cpp/tar.gz/2f86d13775d119edbb69af52e5f566fd65c6953b",
+      "archiveSHA256": "923b2298148581b14ef21d9ce29d83eca102ff671a547dfdbd227245a199bcd8",
+      "notices": [
+        "yaml-cpp/yaml-cpp-2f86d13775d119edbb69af52e5f566fd65c6953b.tar.gz%2Fyaml-cpp-2f86d13775d119edbb69af52e5f566fd65c6953b%2FLICENSE",
+        "yaml-cpp/yaml-cpp-2f86d13775d119edbb69af52e5f566fd65c6953b.tar.gz%2Fyaml-cpp-2f86d13775d119edbb69af52e5f566fd65c6953b%2Ftest%2Fgoogletest-1.13.0%2FLICENSE"
+      ]
+    },
+    {
+      "name": "boost",
+      "version": "1.89.0",
+      "repository": "https://github.com/boostorg/boost",
+      "commit": "ef7fea34711a189472893b88205b1dd3c275677b",
+      "archiveURL": "https://archives.boost.io/release/1.89.0/source/boost_1_89_0.tar.gz",
+      "archiveSHA256": "9de758db755e8330a01d995b0a24d09798048400ac25c03fc5ea9be364b13c93",
+      "archiveLocallyCollected": false,
+      "notices": [
+        "boost/LICENSE_1_0.txt"
+      ]
+    }
+  ],
+  "noticeFormat": "Original upstream bytes; Markdown notices use a .txt suffix because the app displays plain text, not repository documentation."
+}

@@ -1,0 +1,77 @@
+name: Release
+on:
+  push:
+    tags: ['v*']
+permissions:
+  contents: read
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  package:
+    runs-on: macos-15
+    timeout-minutes: 90
+    outputs:
+      prerelease: ${{ steps.version.outputs.prerelease }}
+      version: ${{ steps.version.outputs.version }}
+    env:
+      DEVELOPER_DIR: /Applications/Xcode_26.3.app/Contents/Developer
+      MTV_FILE_SIGNING: '0'
+      MACTV_RELEASE_TAG: ${{ github.ref_name }}
+      MTV_SOURCE_REVISION: ${{ github.sha }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate tag
+        id: version
+        run: |
+          ruby tools/build/release-version.rb "$MACTV_RELEASE_TAG" >> "$GITHUB_OUTPUT"
+          echo "MACTV_BUILD_NUMBER=$((100 + GITHUB_RUN_NUMBER))" >> "$GITHUB_ENV"
+          test "$(uname -m)" = arm64
+          xcodebuild -version
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: tools/package-lock.json
+      - run: npm --prefix tools ci
+      - run: npm --prefix tools run check:integrations && npm --prefix tools run test:integrations
+      - run: ruby tools/build/prepare-release-runtime.rb
+      - run: bash tools/check/test.sh --no-parallel
+      - run: make check
+      - run: ruby tools/check/test-release-version.rb
+      - run: make build
+      - name: Package installer and source
+        run: |
+          bash tools/build/package-preview.sh
+          git archive --format=tar.gz --output=dist/MacTV-source.tar.gz HEAD
+          mkdir -p dist/release
+          mv "dist/packages/MacTV-${{ steps.version.outputs.version }}-arm64.dmg" dist/release/
+          mv dist/MacTV-source.tar.gz dist/MacTV-native-runtime-sources.tar.gz dist/release/
+      - uses: actions/upload-artifact@v4
+        with:
+          name: release-package
+          path: dist/release/*
+          if-no-files-found: error
+          retention-days: 14
+  publish:
+    needs: package
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: release-package
+          path: release
+      - name: Publish GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          RELEASE_TAG: ${{ github.ref_name }}
+          PRERELEASE: ${{ needs.package.outputs.prerelease }}
+        run: |
+          args=()
+          if [[ "$PRERELEASE" == true ]]; then args+=(--prerelease --latest=false); fi
+          gh release create "$RELEASE_TAG" release/* --verify-tag --generate-notes \
+            --title "MacTV $RELEASE_TAG" "${args[@]}" \
+            --notes 'Apple Silicon · macOS 15+. This build is ad-hoc signed and is not notarized. 此构建采用临时签名，未经 Apple 公证。'

@@ -1,0 +1,74 @@
+{
+  "id": "mtv.bilibili",
+  "name": "Bilibili",
+  "version": "0.1.9",
+  "apiVersion": 1,
+  "entry": "plugin.js",
+  "domains": [
+    "api.bilibili.com",
+    "passport.bilibili.com"
+  ],
+  "capabilities": [
+    "browse",
+    "search",
+    "resolve",
+    "login",
+    "folders",
+    "history",
+    "lookup",
+    "watchlist",
+    "continuation"
+  ],
+  "authentication": {
+    "issuerDomains": [
+      "passport.bilibili.com"
+    ],
+    "sessionDomains": [
+      "api.bilibili.com"
+    ],
+    "qrDomains": [
+      "passport.bilibili.com",
+      "account.bilibili.com"
+    ],
+    "cookieNames": [
+      "SESSDATA",
+      "bili_jct",
+      "DedeUserID",
+      "DedeUserID__ckMd5"
+    ],
+    "requiredCookieNames": [
+      "SESSDATA"
+    ],
+    "challengePaths": [
+      "/x/passport-login/web/qrcode/generate"
+    ],
+    "credentialPaths": [
+      "/x/passport-login/web/qrcode/poll"
+    ],
+    "successCodePath": [
+      "data",
+      "code"
+    ],
+    "successCode": 0
+  },
+  "playbackDomains": [
+    "bilivideo.com",
+    "bilivideo.cn",
+    "akamaized.net"
+  ],
+  "playbackReferer": "https://www.bilibili.com/",
+  "artworkDomains": [
+    "hdslb.com"
+  ],
+  "presentation": {
+    "symbol": "play.tv",
+    "tint": "pink",
+    "summary": "首页推荐 · 热门 · 排行榜 · 动态 · 收藏夹",
+    "availability": "preview",
+    "showOnHome": true
+  },
+  "localizedNames": {
+    "en": "Bilibili",
+    "zh-Hans": "哔哩哔哩"
+  }
+}

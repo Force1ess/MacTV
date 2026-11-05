@@ -1,0 +1,97 @@
+{
+  "id": "mtv.quark",
+  "name": "Quark Drive",
+  "version": "0.2.0",
+  "apiVersion": 1,
+  "entry": "plugin.js",
+  "domains": [
+    "uop.quark.cn",
+    "pan.quark.cn",
+    "drive.quark.cn"
+  ],
+  "capabilities": [
+    "login",
+    "browse",
+    "folders",
+    "resolve",
+    "history",
+    "watchlist"
+  ],
+  "requestReferer": "https://pan.quark.cn/",
+  "playbackReferer": "https://pan.quark.cn/",
+  "requestUserAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) quark-cloud-drive/2.5.20 Chrome/100.0.4896.160 Electron/18.3.5.4-b478491100 Safari/537.36 Channel/pckk_other_ch",
+  "postEndpoints": [
+    {
+      "host": "drive.quark.cn",
+      "path": "/1/clouddrive/file/v2/play"
+    },
+    {
+      "host": "drive.quark.cn",
+      "path": "/1/clouddrive/file/download"
+    }
+  ],
+  "playbackDomains": [
+    "quark.cn",
+    "quark.com.cn",
+    "uc.cn"
+  ],
+  "authentication": {
+    "issuerDomains": [
+      "uop.quark.cn",
+      "pan.quark.cn"
+    ],
+    "sessionDomains": [
+      "drive.quark.cn"
+    ],
+    "qrDomains": [
+      "su.quark.cn"
+    ],
+    "cookieNames": [
+      "__pus",
+      "__puus",
+      "__kps",
+      "__uid"
+    ],
+    "requiredCookieNames": [
+      "__pus"
+    ],
+    "challengePaths": [
+      "/cas/ajax/getTokenForQrcodeLogin"
+    ],
+    "credentialPaths": [
+      "/cas/ajax/getServiceTicketByQrcodeToken",
+      "/account/info"
+    ],
+    "successCodePath": [
+      "status"
+    ],
+    "successCode": 2000000,
+    "ticketExchange": {
+      "sourcePath": "/cas/ajax/getServiceTicketByQrcodeToken",
+      "ticketPath": [
+        "data",
+        "members",
+        "service_ticket"
+      ],
+      "endpoint": "https://pan.quark.cn/account/info",
+      "ticketParameter": "st",
+      "fixedQuery": {
+        "lw": "scan"
+      },
+      "confirmationBooleanPath": [
+        "success"
+      ]
+    }
+  },
+  "presentation": {
+    "symbol": "cloud",
+    "tint": "cyan",
+    "summary": "浏览网盘影片，在电视上接着看",
+    "availability": "preview",
+    "showOnHome": true
+  },
+  "localizedNames": {
+    "en": "Quark Drive",
+    "zh-Hans": "夸克网盘"
+  }
+}

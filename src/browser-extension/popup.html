@@ -1,0 +1,8 @@
+<!doctype html>
+<html lang="zh-CN"><meta charset="utf-8"><title>MacTV 平台登录</title>
+<style>body{width:320px;padding:20px;font:14px system-ui;background:#17191d;color:#fff}button{padding:12px 22px;border:0;border-radius:12px;background:#cce7ff;font:inherit}p{line-height:1.6;color:#ccd0d8}</style>
+<h2>导入平台登录</h2><p>先在当前Chrome资料登录对应平台。点击后只读取所选平台的会话，由本机MacTV验证并保存至本机文件，无需读取Chrome解密钥匙。</p>
+<label for="provider">选择平台</label>
+<select id="provider"><option value="mtv.quark">夸克网盘</option><option value="mtv.bilibili">哔哩哔哩</option></select>
+<button id="import">导入到 MacTV</button><p id="status" role="status"></p>
+<script src="popup.js"></script></html>

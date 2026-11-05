@@ -1,0 +1,1204 @@
+{
+  "schema": 1,
+  "targetBuild": 100,
+  "candidateBuild": 99,
+  "status": "candidate",
+  "checks": {
+    "coreTests": {
+      "status": "passed",
+      "count": 309,
+      "scope": "86 suites; latest local sequential run includes 309 tests and explicit versioned Quark budget preservation. Two converter tests retain separate Mini verification.",
+      "runtimeDependentLocalSkips": 2,
+      "miniBundledConverterPassed": 2
+    },
+    "pluginTests": {
+      "status": "passed",
+      "count": 37
+    },
+    "sourceManagement": {
+      "status": "passed",
+      "count": 70,
+      "evidenceRun": "run-20261105-054624-37BFE6F6",
+      "scope": "English installed-app source/settings/folder navigation; owned fixtures; no physical remote claim",
+      "priorRegression": {
+        "evidenceRun": "run-20261105-035820-8196D51B",
+        "failedChecks": [
+          "settingsShortOptionsListDoesNotFocusRemovedEngineOrMetadata",
+          "voiceActionFocusDoesNotStartRecordingOrSwitchTabs"
+        ],
+        "resolution": "Initialize the full navigation grid before asynchronous source restoration; assert the added voice setting rather than the removed one-item list."
+      }
+    },
+    "modernPlayback": {
+      "status": "passed",
+      "count": 132,
+      "scope": "Actual GPU/codec/track controls, full native notices and ordinary UI-test mute assertions after the native CoreAudio backport; physical television output separate",
+      "evidenceRun": "run-20261105-081740-5E61D4F6",
+      "sourceRevision": "91fdad5651878fd20a095b323f8f06d35e3f26ba"
+    },
+    "nativeKeyboard": {
+      "status": "passed",
+      "checks": 23,
+      "failedChecks": 0,
+      "scope": "Actual mounted native input, locally delivered configured voice-key event, secret-input voice rejection, UTF-16 text, focus and late-composition rejection; no physical remote or microphone claim",
+      "evidenceRun": "run-20261105-054542-0C05159C",
+      "chineseEvidenceRun": "run-20261105-054557-DA6FEBA5",
+      "bothInterfaceLanguagesVerified": true,
+      "initialInputModeFollowsInterfaceLanguage": true
+    },
+    "realLibrary": {
+      "status": "passed",
+      "files": 387,
+      "unavailable": 0,
+      "basis": "application-fresh-scan",
+      "fullChecks": 175
+    },
+    "metadata": {
+      "status": "passed",
+      "basis": "app-current-model-after-fresh-scan",
+      "files": 387,
+      "rootCards": 30,
+      "extraFiles": 112,
+      "missingPosters": 0,
+      "malformedTitles": 0,
+      "unparsedEpisodes": 0,
+      "scope": "Selected library after parser6 contextual episode repair; original files unchanged",
+      "contextualEpisodeRegression": {
+        "beforeMissingPosters": 7,
+        "afterMissingPosters": 0,
+        "filesPreserved": 387,
+        "provider": "tvmaze",
+        "automaticMatch": true,
+        "yearDisambiguationVerified": true,
+        "parserVersion": 6,
+        "explicitNFOOverrides": true
+      }
+    },
+    "chromeLogin": {
+      "status": "passed",
+      "ownedFixtureChecks": 54,
+      "ownedFixturePassed": true,
+      "realPlatformLoginVerified": true,
+      "providers": [
+        "mtv.quark",
+        "mtv.bilibili"
+      ],
+      "authorizationCompletedThroughNormalSystemUI": true,
+      "helperFirstAuthorizationHandledRemotely": true,
+      "acrossBuildKeychainConsentVerified": true,
+      "reader": "stable-native-helper-v1",
+      "readerTrustBoundaryChecks": 6,
+      "legacyInteractionPolicyChecks": 3,
+      "restartedAppRealImportVerified": true,
+      "rebuiltHostAppRealImportVerified": true,
+      "verifiedHostRebuildsAfterHelperGrant": 2,
+      "loginComponentContentIdentityPreserved": true,
+      "importsAfterRebuildWereInteractive": false,
+      "afterRebuildQuarkImportSeconds": 0.473,
+      "afterRebuildBilibiliImportSeconds": 0.253,
+      "noninteractiveReadTimeoutVerified": true,
+      "singleOutstandingSystemReadVerified": true,
+      "latestEnglishOwnedFixtureChecks": 58,
+      "latestEnglishOwnedFixtureRun": "run-20261105-054613-7CC330D9",
+      "profileDisplayNamesPreserved": true
+    },
+    "quarkPlayback": {
+      "status": "passed",
+      "checks": 13,
+      "rootEntries": 11,
+      "mediaFolderEntries": 25,
+      "resolveHTTP": 200,
+      "resolveCode": 0,
+      "actualWidth": 1920,
+      "actualHeight": 1038,
+      "nativeMediaSessionHost": "video-play-c-sz.drive.quark.cn",
+      "firstUseConsentAndRevocationVerified": true,
+      "physicalAudioOutputVerified": false,
+      "normalRelaunchChecks": 8,
+      "previousStoredSessionRead": {
+        "rootEntries": 11,
+        "videoEntriesInExplicitFolder": 2,
+        "moduleFailed": false,
+        "needsLogin": false,
+        "freshChromeImportVerified": false,
+        "scope": "current stored session, root and one explicit nested movie folder; no playback in this read-only check"
+      },
+      "latestRegionalPlaybackRegression": {
+        "status": "passed",
+        "scope": "approved official playback/original-media service families; real 4K original playback, pause, completed seek, speed and embedded subtitle selection/off",
+        "actualWidth": 3840,
+        "actualHeight": 2160,
+        "nativeChecks": 12,
+        "embeddedSubtitleRendered": true,
+        "subtitleEvidence": "private native-player-only frame inspected; excluded from public source",
+        "physicalAudioOutputVerified": false
+      },
+      "originalMedia": {
+        "container": "Matroska",
+        "nativeCodec": "HEVC",
+        "embeddedSubtitleCodec": "PGS",
+        "nativeCookieBroker": true,
+        "boundedReadAhead": 3,
+        "maxReadAheadBytes": 31457280,
+        "latestClickToNativeClockAndVideoMs": 8706.2,
+        "metricIsNotFirstVisibleFrame": true,
+        "coldStartP99Verified": false,
+        "rangeChunkBytes": 10485760,
+        "eventQueueConsumed": true,
+        "propertyObservation": "native asynchronous cache; no synchronous UI property polling",
+        "readAheadScope": "Per ordered response stream; not a whole-player memory limit.",
+        "maximumActiveTransferJobs": 8
+      },
+      "scope": "Native software playback, original/region resolution and embedded subtitles; physical television output is tracked separately.",
+      "membershipInterpretation": {
+        "userConfirmedActive": true,
+        "providerCodesAreNotExpiryProof": true,
+        "scope": "User confirmation of current membership; not an independently verified expiry date or bandwidth guarantee."
+      },
+      "latestMembershipConfirmedRegression": {
+        "status": "passed",
+        "evidenceRun": "run-20261105-071942-71D78C7B",
+        "sourceRevision": "12ddfcb29af25125a6a5b9745c5d708c1f9890df",
+        "attempts": 3,
+        "successful": 3,
+        "original4K": true,
+        "minFirstFrameMS": 3853.42,
+        "maxFirstFrameMS": 4382.35,
+        "observationSecondsPerTrial": 30,
+        "rebufferObservedTrials": 0,
+        "p99Acceptance": false,
+        "normalModeRestored": true,
+        "scope": "One selected original episode with current stored session; user-confirmed active membership. No membership expiry date or all-content claim."
+      },
+      "latestRuntimeProviderRevalidationRequired": false,
+      "priorPlaybackEvidencePreserved": true,
+      "latestRuntimeOriginalValidation": {
+        "status": "passed",
+        "evidenceRun": "run-20261105-090409-3CC2AEA6",
+        "trials": 100,
+        "allReachedFrame": true,
+        "allNativeHDMIAudioVerified": true,
+        "allVisibleFullscreenWindowsVerified": true,
+        "scope": "One original 4K episode with real stored session; native audio/video software path, not physical television audibility or an all-content claim."
+      },
+      "latestFullscreenMP4Validation": {
+        "status": "passed",
+        "evidenceRun": "run-20261105-111455-33A504F3",
+        "trials": 100,
+        "actualWidth": 1920,
+        "actualHeight": 1038,
+        "actualHDMIOutputVerified": true,
+        "fileCardProvenanceVerified": true,
+        "currentBudgetMS": 7000,
+        "currentBudgetReviewPassed": true,
+        "old3000MSMissesPreserved": 4,
+        "physicalAudibilityVerified": false,
+        "transport": "shared-session-atomic-ranges",
+        "currentCohortMissesAt3000MS": 0
+      }
+    },
+    "bilibiliPlayback": {
+      "status": "passed",
+      "count": 11,
+      "actualHeight": 1080,
+      "qualitySwitch": "1080p-720p-1080p",
+      "physicalAudioOutputVerified": false,
+      "latestRuntimeProviderRevalidationRequired": false,
+      "priorPlaybackEvidencePreserved": true,
+      "latestFullscreenProviderValidation": {
+        "status": "passed",
+        "evidenceRun": "run-20261105-094638-1DB20450",
+        "trials": 100,
+        "actualWidth": 1920,
+        "actualHeight": 1080,
+        "actualHDMIOutputVerified": true,
+        "dynamicAudibleMediaSelectionVerified": true,
+        "physicalAudibilityVerified": false
+      }
+    },
+    "firstFrameBudget": {
+      "status": "passed",
+      "bilibili": {
+        "attempts": 100,
+        "successful": 100,
+        "session": "stored",
+        "qualityCode": 80,
+        "actualHeight": 1080,
+        "p50MS": 596.01,
+        "p95MS": 881.04,
+        "observedP99MS": 1009.26,
+        "maxMS": 1235.98,
+        "overBudget": 0,
+        "firstMeasuredInProcess": 1,
+        "sameProcessRepeats": 99,
+        "scope": "One real stored-session video at actual decoded 1920x1080. Visible fullscreen window and verified CGImage timing, including capture cost; one first-in-process trial plus 99 repeats, not independent cold starts or all content.",
+        "previousWindowedBeforeCoreAudio": {
+          "attempts": 100,
+          "successful": 100,
+          "session": "stored",
+          "qualityCode": 80,
+          "actualHeight": 1080,
+          "p50MS": 849.81,
+          "p95MS": 1022.3,
+          "observedP99MS": 2190.92,
+          "maxMS": 5836.14,
+          "overBudget": 1,
+          "firstMeasuredInProcess": 1,
+          "sameProcessRepeats": 99,
+          "scope": "one explicit video; not an all-content or independent cold-start claim"
+        },
+        "status": "passed",
+        "actualWidth": 1920,
+        "rebufferObservedTrials": 0,
+        "observationSecondsPerTrial": 3,
+        "evidenceRun": "run-20261105-094638-1DB20450",
+        "sourceRevision": "f2a1c9ff0ad4b0d28e1ff8d676a4ff47bcb7abb4",
+        "audioOutputRequested": "tv",
+        "presentationRequested": "full-screen",
+        "allHDMIScopesVerified": true,
+        "allPresentationScopesVerified": true,
+        "allPlaybackMuted": true,
+        "earlierNotificationClockCohort": {
+          "evidenceRun": "run-20261105-093038-6C925105",
+          "attempts": 100,
+          "successful": 100,
+          "observedP99MS": 886.75,
+          "maxMS": 1107.87,
+          "actualDimensions": "not-recorded",
+          "firstFrameClock": "AVPlayer display-ready notification before decoded-frame validation",
+          "usedAsCurrentAcceptance": false
+        },
+        "earlierRoutePredicateFailuresPreserved": [
+          "run-20261105-091700-1DB44B92",
+          "run-20261105-092519-B30BD87E"
+        ]
+      },
+      "quark": {
+        "status": "passed",
+        "attempts": 100,
+        "successful": 100,
+        "session": "stored",
+        "actualHeight": 1038,
+        "p50MS": 2082.49,
+        "p95MS": 2471.7,
+        "observedP99MS": 2621.15,
+        "maxMS": 2729.88,
+        "overBudget": 0,
+        "firstMeasuredInProcess": 1,
+        "sameProcessRepeats": 99,
+        "scope": "One actual MP4 folder card, decoded 1920x1038 and visible fullscreen HDMI output; 100 successful trials, one first-in-process and 99 repeats, no independent cold-start or all-content claim.",
+        "preparation": "playerItem",
+        "eagerBaseline": {
+          "attempts": 100,
+          "successful": 100,
+          "observedP99MS": 3258.84,
+          "maxMS": 7541.73,
+          "overBudget": 3
+        },
+        "previousWindowedBeforeCoreAudio": {
+          "status": "passed",
+          "attempts": 100,
+          "successful": 100,
+          "session": "stored",
+          "actualHeight": 1038,
+          "p50MS": 1615.58,
+          "p95MS": 1792.45,
+          "observedP99MS": 1913.38,
+          "maxMS": 2181.28,
+          "overBudget": 0,
+          "firstMeasuredInProcess": 1,
+          "sameProcessRepeats": 99,
+          "scope": "one explicit movie; not all-content or independent cold-start evidence",
+          "preparation": "playerItem",
+          "eagerBaseline": {
+            "attempts": 100,
+            "successful": 100,
+            "observedP99MS": 3258.84,
+            "maxMS": 7541.73,
+            "overBudget": 3
+          }
+        },
+        "actualWidth": 1920,
+        "rebufferObservedTrials": 0,
+        "observationSecondsPerTrial": 3,
+        "evidenceRun": "run-20261105-111455-33A504F3",
+        "sourceRevision": "7f82dd9097b5204be52475722d4de285b26a554f",
+        "audioOutputRequested": "tv",
+        "presentationRequested": "full-screen",
+        "allHDMIScopesVerified": true,
+        "allPresentationScopesVerified": true,
+        "allPlaybackMuted": true,
+        "itemSource": "provider-folder-card",
+        "sourceFileExtension": "mp4",
+        "startupP99BudgetMS": 7000,
+        "progressiveCandidate": {
+          "productionEnabled": false,
+          "ownedFixtureChecks": 17,
+          "ownedFixturePassed": true,
+          "ownedFixtureRun": "run-20261105-102508-EB164CBD",
+          "ownedFixtureDurationSeconds": 12,
+          "ownedSeekTargetSeconds": 7.2,
+          "ownedSeekFramePTSSeconds": 7.2,
+          "earlierOwnedSeekFailurePreserved": "run-20261105-102045-B1B1A918",
+          "livePilotRun": "run-20261105-102625-6D2B303B",
+          "livePilotTrials": 3,
+          "livePilotFrameMS": [
+            2749.76,
+            2861.96,
+            5340.08
+          ],
+          "livePilotRebufferTrials": 0,
+          "latencyAcceptance": false,
+          "nextDiagnostic": "Completed: no candidate has sufficient latency evidence for production. Pixel availability follows display readiness closely; eager initialization moves the same delay into preparation. Continue investigating the normal MP4 path without promoting these experiments.",
+          "diagnosticGroups": [
+            {
+              "variant": "atomic",
+              "run": "run-20261105-103424-25F61AF5",
+              "trials": 10,
+              "p50MS": 2152.64,
+              "maxMS": 2729.22,
+              "overBudget": 0,
+              "rebufferTrials": 0
+            },
+            {
+              "variant": "progressive",
+              "run": "run-20261105-103520-880C69BA",
+              "trials": 10,
+              "p50MS": 2736.51,
+              "maxMS": 4576.89,
+              "overBudget": 2,
+              "rebufferTrials": 0
+            },
+            {
+              "variant": "eager-asset",
+              "run": "run-20261105-103852-F9349801",
+              "trials": 10,
+              "p50MS": 2278.19,
+              "maxMS": 6719.45,
+              "overBudget": 3,
+              "rebufferTrials": 0
+            }
+          ],
+          "comparisonScope": "Small sequential development observations, not controlled network comparisons or P99 acceptance."
+        },
+        "previousBudgetEvaluation": {
+          "budgetMS": 3000,
+          "overBudget": 4,
+          "status": "budget-not-met"
+        },
+        "acceptancePolicy": "quark-p99-7s-v1",
+        "acceptanceBasis": "100 trials on the validated pooled transport, subsequently made the equivalent normal-mode default. Meets both original 3000 ms and current user-approved 7000 ms; no claim of a controlled causal comparison.",
+        "pooledAtomicCandidate": {
+          "productionEnabled": true,
+          "ownedFixtureChecks": 19,
+          "ownedFixturePassed": true,
+          "ownedFixtureRun": "run-20261105-110845-A1308B24",
+          "evidenceRun": "run-20261105-111455-33A504F3",
+          "trials": 100,
+          "successful": 100,
+          "observedP99MS": 2621.15,
+          "maxMS": 2729.88,
+          "missesAtOriginal3000MS": 0,
+          "rebufferObservedTrials": 0,
+          "observationSecondsPerTrial": 3,
+          "enabledSourceRevision": "491192e698768be4a9f20864df983d9a7f37875f",
+          "continuousObservation": {
+            "passed": true,
+            "run": "run-20261105-112600-88639535",
+            "seconds": 300.02,
+            "startPosition": 0,
+            "endPosition": 299.81646,
+            "longestClockGapSeconds": 0.314,
+            "rebufferTrials": 0,
+            "errors": 0
+          },
+          "postActivationOwnedChecks": {
+            "passed": true,
+            "checks": 19,
+            "run": "run-20261105-113616-5940CA0B"
+          },
+          "postActivationRealRegression": {
+            "passed": true,
+            "trials": 3,
+            "observationSecondsEach": 30,
+            "run": "run-20261105-113619-C40892BB"
+          }
+        },
+        "previousIsolatedTransportBaseline": {
+          "status": "passed",
+          "attempts": 100,
+          "successful": 100,
+          "session": "stored",
+          "actualHeight": 1038,
+          "p50MS": 2144.37,
+          "p95MS": 2708.93,
+          "observedP99MS": 3841.35,
+          "maxMS": 6938.92,
+          "overBudget": 0,
+          "firstMeasuredInProcess": 1,
+          "sameProcessRepeats": 99,
+          "scope": "One real MP4 folder card; decoded 1920x1038, fullscreen/HDMI and verified CGImage clock. All 100 successful; observed P99 3841.35 ms and maximum 6938.92 ms meet current 7000 ms. The original 3000 ms summary and its four misses remain unchanged.",
+          "preparation": "playerItem",
+          "eagerBaseline": {
+            "attempts": 100,
+            "successful": 100,
+            "observedP99MS": 3258.84,
+            "maxMS": 7541.73,
+            "overBudget": 3
+          },
+          "previousWindowedBeforeCoreAudio": {
+            "status": "passed",
+            "attempts": 100,
+            "successful": 100,
+            "session": "stored",
+            "actualHeight": 1038,
+            "p50MS": 1615.58,
+            "p95MS": 1792.45,
+            "observedP99MS": 1913.38,
+            "maxMS": 2181.28,
+            "overBudget": 0,
+            "firstMeasuredInProcess": 1,
+            "sameProcessRepeats": 99,
+            "scope": "one explicit movie; not all-content or independent cold-start evidence",
+            "preparation": "playerItem",
+            "eagerBaseline": {
+              "attempts": 100,
+              "successful": 100,
+              "observedP99MS": 3258.84,
+              "maxMS": 7541.73,
+              "overBudget": 3
+            }
+          },
+          "actualWidth": 1920,
+          "rebufferObservedTrials": 0,
+          "observationSecondsPerTrial": 3,
+          "evidenceRun": "run-20261105-095832-9BBD51BC",
+          "sourceRevision": "fe51f27c9350947ab5597662671cdaf43b076277",
+          "audioOutputRequested": "tv",
+          "presentationRequested": "full-screen",
+          "allHDMIScopesVerified": true,
+          "allPresentationScopesVerified": true,
+          "allPlaybackMuted": true,
+          "itemSource": "provider-folder-card",
+          "sourceFileExtension": "mp4",
+          "startupP99BudgetMS": 7000,
+          "progressiveCandidate": {
+            "productionEnabled": false,
+            "ownedFixtureChecks": 17,
+            "ownedFixturePassed": true,
+            "ownedFixtureRun": "run-20261105-102508-EB164CBD",
+            "ownedFixtureDurationSeconds": 12,
+            "ownedSeekTargetSeconds": 7.2,
+            "ownedSeekFramePTSSeconds": 7.2,
+            "earlierOwnedSeekFailurePreserved": "run-20261105-102045-B1B1A918",
+            "livePilotRun": "run-20261105-102625-6D2B303B",
+            "livePilotTrials": 3,
+            "livePilotFrameMS": [
+              2749.76,
+              2861.96,
+              5340.08
+            ],
+            "livePilotRebufferTrials": 0,
+            "latencyAcceptance": false,
+            "nextDiagnostic": "Completed: no candidate has sufficient latency evidence for production. Pixel availability follows display readiness closely; eager initialization moves the same delay into preparation. Continue investigating the normal MP4 path without promoting these experiments.",
+            "diagnosticGroups": [
+              {
+                "variant": "atomic",
+                "run": "run-20261105-103424-25F61AF5",
+                "trials": 10,
+                "p50MS": 2152.64,
+                "maxMS": 2729.22,
+                "overBudget": 0,
+                "rebufferTrials": 0
+              },
+              {
+                "variant": "progressive",
+                "run": "run-20261105-103520-880C69BA",
+                "trials": 10,
+                "p50MS": 2736.51,
+                "maxMS": 4576.89,
+                "overBudget": 2,
+                "rebufferTrials": 0
+              },
+              {
+                "variant": "eager-asset",
+                "run": "run-20261105-103852-F9349801",
+                "trials": 10,
+                "p50MS": 2278.19,
+                "maxMS": 6719.45,
+                "overBudget": 3,
+                "rebufferTrials": 0
+              }
+            ],
+            "comparisonScope": "Small sequential development observations, not controlled network comparisons or P99 acceptance."
+          },
+          "previousBudgetEvaluation": {
+            "budgetMS": 3000,
+            "overBudget": 4,
+            "status": "budget-not-met"
+          },
+          "acceptancePolicy": "quark-p99-7s-v1",
+          "acceptanceBasis": "User-requested 7-second policy review of the unchanged 100-trial baseline; not a speed improvement.",
+          "pooledAtomicCandidate": {
+            "productionEnabled": false,
+            "ownedFixtureChecks": 19,
+            "ownedFixturePassed": true,
+            "ownedFixtureRun": "run-20261105-110845-A1308B24",
+            "evidenceRun": "run-20261105-111455-33A504F3",
+            "trials": 100,
+            "successful": 100,
+            "observedP99MS": 2621.15,
+            "maxMS": 2729.88,
+            "missesAtOriginal3000MS": 0,
+            "rebufferObservedTrials": 0,
+            "observationSecondsPerTrial": 3,
+            "next": "300-second continuous observation before normal-mode activation."
+          }
+        },
+        "transport": "shared-session-atomic-ranges"
+      },
+      "quarkOriginal": {
+        "status": "passed",
+        "scope": "One original 4K episode; actual visible fullscreen window on the active Space, native decoded frame and explicit HDMI output. One first-in-process trial plus 99 repeats; not independent cold starts or all-content evidence.",
+        "startupP99BudgetMS": 7000,
+        "attempts": 100,
+        "successful": 100,
+        "actualWidth": 3840,
+        "actualHeight": 2160,
+        "p50MS": 1830.14,
+        "p95MS": 2088.49,
+        "observedP99MS": 2298.7,
+        "maxMS": 2707.8,
+        "overBudget": 0,
+        "firstMeasuredInProcess": 1,
+        "sameProcessRepeats": 99,
+        "rebufferObservedTrials": 0,
+        "observationSecondsPerTrial": 3,
+        "rangeChunkBytes": 10485760,
+        "rangeDepth": 3,
+        "initialRangeDepth": 3,
+        "originConnection": "system-proxy",
+        "evidenceRun": "run-20261105-090409-3CC2AEA6",
+        "previousWindowedBeforeCoreAudio": {
+          "status": "passed",
+          "scope": "One original 4K episode, native decoded frame with capture cost included, sequential trials in one process; not independent cold starts or all-content evidence",
+          "startupP99BudgetMS": 6000,
+          "attempts": 100,
+          "successful": 100,
+          "actualWidth": 3840,
+          "actualHeight": 2160,
+          "p50MS": 4498.52,
+          "p95MS": 4800.86,
+          "observedP99MS": 5092.84,
+          "maxMS": 5923.13,
+          "overBudget": 0,
+          "firstMeasuredInProcess": 1,
+          "sameProcessRepeats": 99,
+          "rebufferObservedTrials": 0,
+          "observationSecondsPerTrial": 3,
+          "rangeChunkBytes": 10485760,
+          "rangeDepth": 3,
+          "initialRangeDepth": 3,
+          "originConnection": "system-proxy",
+          "evidenceRun": "run-20261105-030105-5E6BE401"
+        },
+        "sourceRevision": "d498ae67c825531804c8ee99bb6208b23b4aa36b",
+        "audioOutputRequested": "tv",
+        "presentationRequested": "full-screen",
+        "allHDMIScopesVerified": true,
+        "allPresentationScopesVerified": true,
+        "allPlaybackMuted": true,
+        "nativeRuntimeUpstreamFix": "3dae21b1ed4793912a8f9de1c5eb3cf32d227bce",
+        "maximumBrowserRestoreMS": 915.47,
+        "windowSizePoints": "1920x1080",
+        "displayBackingScale": 2.0,
+        "previousBudgetEvaluation": {
+          "budgetMS": 6000,
+          "overBudget": 0,
+          "status": "passed"
+        },
+        "acceptancePolicy": "quark-p99-7s-v1"
+      },
+      "original4KDevelopmentObservation": {
+        "status": "budget-not-met",
+        "attemptsPerVariant": 3,
+        "observationSecondsPerTrial": 30,
+        "p99Acceptance": false,
+        "controlledComparison": false,
+        "scope": "one original 4K file; sequential network conditions; packaging overlapped experimental block; not evidence to change normal buffering",
+        "results": {
+          "default": {
+            "trials": 3,
+            "successfulTrials": 3,
+            "minMS": 3297.0785416691797,
+            "maxMS": 8163.882208333234,
+            "p50MS": 3717.4213333346415,
+            "rebufferObservedTrials": 2,
+            "deadlineMissesIncludingFailures": 3
+          },
+          "noInitialBuffer": {
+            "trials": 3,
+            "successfulTrials": 3,
+            "minMS": 3264.758500001335,
+            "maxMS": 4073.657666667714,
+            "p50MS": 3397.703750000801,
+            "rebufferObservedTrials": 0,
+            "deadlineMissesIncludingFailures": 3
+          }
+        }
+      },
+      "bilibiliHarnessRegression": {
+        "failedTrialsPreserved": 3,
+        "cause": "synthetic card omitted provider collection identity",
+        "fix": "provider lookup supplies a complete card without weakening continuation validation",
+        "fixCommit": "f2c7a4b",
+        "liveRetest": "passed"
+      },
+      "currentBilibiliDevelopmentObservation": {
+        "attempts": 3,
+        "successful": 3,
+        "observationSecondsPerTrial": 30,
+        "minMS": 858.373583330831,
+        "maxMS": 1086.1775833327556,
+        "rebufferObservedTrials": 0,
+        "p99Acceptance": false,
+        "scope": "one stored-account video, provider card, one process; not independent cold starts",
+        "selectedQualityCode": 80
+      },
+      "budgetsMS": {
+        "default": 3000,
+        "decoded4K": 6000,
+        "quark": 7000
+      },
+      "budgetBasis": "Explicit user update: Quark P99 <=7000 ms regardless of resolution. Bilibili 1080p retains 3000 ms. Legacy unmarked records retain their previous decoded-dimension policy; current acceptance is a derived review, not rewritten measurement.",
+      "progressiveRangeDevelopmentObservation": {
+        "status": "pending-more-samples",
+        "attempts": 3,
+        "actualWidth": 3840,
+        "actualHeight": 2160,
+        "startupBudgetMS": 6000,
+        "firstFrameMS": [
+          7122,
+          5022,
+          4678
+        ],
+        "overBudget": 1,
+        "rebufferObservedTrials": 3,
+        "observationSecondsPerTrial": 30,
+        "p99Acceptance": false,
+        "controlledComparison": false,
+        "scope": "one first measured playback and two repeats; validated progressive ordered byte delivery; performance sample not a sustained playback or physical output acceptance"
+      },
+      "progressiveOriginal4K100": {
+        "status": "budget-not-met",
+        "attempts": 100,
+        "successful": 100,
+        "actualWidth": 3840,
+        "actualHeight": 2160,
+        "startupBudgetMS": 6000,
+        "p50MS": 4778.79,
+        "p95MS": 8422.19,
+        "observedP99MS": 31513.58,
+        "maxMS": 35371.45,
+        "overBudget": 11,
+        "firstMeasuredInProcess": 1,
+        "sameProcessRepeats": 99,
+        "rebufferObservedTrials": 62,
+        "observationSecondsPerTrial": 3,
+        "transport": "progressive ordered two-way 1 MiB range prefetch",
+        "scope": "one owned original 4K episode, sequential trials in one process; no independent cold-start or sustained playback claim"
+      },
+      "headFirst4KComparison": {
+        "status": "not-selected",
+        "attempts": 100,
+        "successful": 100,
+        "observedP99MS": 3097.41,
+        "maxMS": 3489.35,
+        "rebufferObservedTrials": 7,
+        "observationSecondsPerTrial": 3,
+        "evidenceRun": "run-20261105-022840-A9941F88",
+        "reason": "Faster first frame but seven short-window rebuffer observations; eager three-range default met the 6-second budget without these observations. Sequential network conditions, not randomized A/B evidence."
+      },
+      "remaining": "Broader-content and independent cold-start coverage; recorded original 4K same-process P99 and five-minute default observation passed.",
+      "defaultOriginalSustainedObservation": {
+        "status": "passed",
+        "attempts": 1,
+        "observationSeconds": 300.0128,
+        "firstFrameMS": 3844.5957,
+        "startPositionSeconds": 0.209,
+        "endPositionSeconds": 300.509,
+        "longestObservedClockGapSeconds": 0.269,
+        "rebufferObservedTrials": 0,
+        "actualWidth": 3840,
+        "actualHeight": 2160,
+        "rangeChunkBytes": 10485760,
+        "rangeDepth": 3,
+        "initialRangeDepth": 3,
+        "originConnection": "system-proxy",
+        "experimentalRangeFlagsUsed": false,
+        "evidenceRun": "run-20261105-033706-49C5A223",
+        "scope": "Single original 4K episode, current application defaults, five-minute observation; not all-content or hours-long acceptance"
+      },
+      "scope": "Recorded explicit-video cohorts only: 100 trials per path, one first measured in process and 99 repeats; original 4K also has a separate default five-minute observation. Not independent cold starts or all-content P99.",
+      "postAsyncProcessExitRegression": {
+        "bilibili": {
+          "attempts": 3,
+          "successful": 3,
+          "observationSecondsPerTrial": 30,
+          "minMS": 511.5,
+          "maxMS": 1068.67,
+          "rebufferObservedTrials": 0,
+          "evidenceRun": "run-20261105-042240-B0F7719C"
+        },
+        "quarkOriginal": {
+          "attempts": 3,
+          "successful": 3,
+          "observationSecondsPerTrial": 30,
+          "minMS": 2920.92,
+          "maxMS": 3784.32,
+          "rebufferObservedTrials": 0,
+          "evidenceRun": "run-20261105-042511-CC13DA0A"
+        },
+        "scope": "Small live regressions after process-exit fix; not a replacement for the separate 100-attempt cohorts or independent cold-start P99."
+      },
+      "currentRuntimeRevalidationRequired": false,
+      "currentNativeUpstreamFix": "3dae21b1ed4793912a8f9de1c5eb3cf32d227bce",
+      "reason": "All accepted cohorts meet current limits. Default pooled MP4 transport passed 100 trials, a separate 300-second observation, 19 owned checks and a three-trial post-activation regression. Legacy isolated-transport measurements and old-budget failures remain preserved.",
+      "userBudgetUpdate": {
+        "policy": "quark-p99-7s-v1",
+        "limitMS": 7000,
+        "plugin": "mtv.quark",
+        "userRequested": true,
+        "sourceMeasurementsUnchanged": true,
+        "newMeasurement": false,
+        "originalSummariesUnchanged": true
+      }
+    },
+    "hardwareOutput": {
+      "status": "pending",
+      "physicalAudibilityVerified": false,
+      "physicalColorVerified": false,
+      "nativeHDMI": {
+        "status": "passed",
+        "checks": 11,
+        "evidenceRun": "run-20261105-081734-097F7F2E",
+        "sourceRevision": "91fdad5651878fd20a095b323f8f06d35e3f26ba",
+        "engines": [
+          "AVPlayer",
+          "MPV"
+        ],
+        "scope": "Explicit quiet owned fixture; actual CoreAudio process uses HDMI, real audio clock and format, unchanged system default; not television speaker audibility."
+      },
+      "earlierFailuresPreserved": [
+        "run-20261105-074646-D37BFFF7",
+        "run-20261105-075443-A3445E2D"
+      ],
+      "normalAppOutput": {
+        "verifiedSourceRevision": "55c3a47942251949ad5182812e4c14b5a8a97e31",
+        "configuredOutput": "tv",
+        "selectedHDMI": true,
+        "systemDefaultChanged": false,
+        "applicationOnlyPreferenceChanged": true
+      }
+    },
+    "remoteControl": {
+      "status": "pending",
+      "physicalArrowKeysVerified": [
+        "down",
+        "up",
+        "right",
+        "left"
+      ],
+      "physicalEvidence": "User pressed four arrows; live focus states changed in the expected sequence in the foreground settings page.",
+      "remaining": "Physical voice/audio delivery and return/menu mapping remain unverified. Repeated manual menu-by-menu exercises are not requested."
+    },
+    "upgradePermissions": {
+      "status": "passed",
+      "volumeScanVerified": true,
+      "chromeGrantVerified": true,
+      "scope": "same-machine main-app rebuild/install; independent Chrome component unchanged"
+    },
+    "programmaticControl": {
+      "status": "passed",
+      "transportTests": 5,
+      "appChecks": 26,
+      "defaultDisabledChecks": 3,
+      "textOnly": true,
+      "realImportDiagnosticVerified": true,
+      "realChromePlatformLoginVerified": true,
+      "scope": "ordinary running app, with fresh inventory and strict poster checks",
+      "supervisedTestNormalRestorationVerified": true,
+      "latestRealLibraryStrictRetest": {
+        "status": "passed",
+        "checks": 26,
+        "files": 387,
+        "missingPosters": 0,
+        "sourceRevision": "a070aa0ed1ceee0896f5c2a41055ffe28321adfb"
+      },
+      "latestNormalControlDisabledRetest": {
+        "status": "passed",
+        "checks": 3,
+        "rejectsStaleState": true
+      }
+    },
+    "sourceReadiness": {
+      "status": "pending",
+      "githubCiVerified": false,
+      "githubCiPassedCommit": "495edaa",
+      "githubCiRun": "https://github.com/Force1ess/MacTV/actions/runs/41935257648",
+      "ciToolchain": "Xcode 26.3 on macOS 15 Intel; Apple Silicon playback verified separately",
+      "scope": "Current application compiled and installed on Mini; 309 local source tests, native transport fixtures and real runtime checks passed. Required current hosted CI remains blocked by the previously verified GitHub account billing failure; local results do not substitute for it.",
+      "currentSourceCIPending": false,
+      "latestFailedCI": "https://github.com/Force1ess/MacTV/actions/runs/41964428482",
+      "latestFailedCICause": "GitHub account payment or spending-limit restriction; job had no runner and executed zero steps.",
+      "latestApplicationRevision": "491192e698768be4a9f20864df983d9a7f37875f",
+      "currentSourceCIRun": "https://github.com/Force1ess/MacTV/actions/runs/41964428482",
+      "currentSourceCIStatus": "blocked-by-account-billing",
+      "hostedCIBlocked": true,
+      "latestCIExecutedSteps": 0,
+      "latestLocalCoreTests": {
+        "passed": true,
+        "tests": 309,
+        "suites": 86,
+        "runtimeDependentSkips": 2
+      }
+    },
+    "distribution": {
+      "status": "pending",
+      "reason": "43 MPV components with 343 collected notices, plus 23 frozen Rime build-dependency notices across six upstream packages; actual app reading verified. Default candidate excludes local provider artwork. Complete binary review and public signing/notarization remain open.",
+      "nativeRuntimeComponents": 43,
+      "sourceObjects": 46,
+      "bundledNotices": 343,
+      "sourceMaterialsComplete": true,
+      "legalReviewComplete": false,
+      "attributionInstalledAppVerified": true,
+      "licenseNativeScrollingVerified": true,
+      "attributionEvidenceRun": "run-20261105-073735-14850605",
+      "candidateBuild": 99,
+      "bundledMinimumMacOS": "26.0",
+      "minimumDerivedFromNativeDeploymentCommands": true,
+      "nativeMaterialsFixtureChecks": 31,
+      "previewStorageFixtureChecks": 10,
+      "privateCandidateAvailable": true,
+      "candidateSourceRevision": "491192e698768be4a9f20864df983d9a7f37875f",
+      "candidateBytes": 81851207,
+      "candidateSHA256": "e4e991913bf09edef9378d121c0f6cf797b754c6d77e43c3347c28c4f1a6fdf6",
+      "candidateIsVerifiedV100": false,
+      "localAndRemoteCandidateVerified": true,
+      "defaultPackageExcludesLocalProviderArtwork": true,
+      "fullNestedLicensesVerified": true,
+      "sourceArchive": {
+        "file": "MacTV-native-runtime-sources-complete.tar.gz",
+        "bytes": 240540101,
+        "sha256": "e38bfe8f43aa814b3cc0f150197c3b1529c454c82e2a36ad92654d1ff1251bb4"
+      },
+      "rimeBuildDependencies": {
+        "noticeComponents": 6,
+        "noticeFiles": 23,
+        "frozenDependencyCommits": true,
+        "bundledAndReadable": true,
+        "sourceProvenance": "resources/rime/third-party/SOURCES.json",
+        "scope": "Includes upstream build/test notices without claiming every tool is linked. Boost source archive is referenced, not locally collected. Complete binary legal review remains separate."
+      },
+      "candidateFile": "MacTV-preview-b99-arm64-header-pool-491192e.dmg",
+      "nativeLocalBuild": {
+        "baseVersion": "0.41.0",
+        "upstreamFix": "3dae21b1ed4793912a8f9de1c5eb3cf32d227bce",
+        "frozenRuntimeDependenciesPreserved": true,
+        "originalInputRuntimeUnchanged": true,
+        "systemPackagesChanged": false,
+        "embeddedCorrespondingSourceVerified": true,
+        "sourceOffer": "MPVNativeEngine/source/mpv-local-build",
+        "minimumMacOS": "26.0",
+        "legalReviewComplete": false
+      },
+      "latestSourceGateFixtures": 10
+    },
+    "systemDictation": {
+      "status": "pending",
+      "nativeClientAttached": true,
+      "systemStartCommandPresent": true,
+      "latestObservation": "Slower owned fixture strictly matched once, then mismatched its opening word on the same audio. Both native delivery and actual-text preservation work; latest strict failure retained.",
+      "actualSpeechTranscriptionVerified": false,
+      "nativeSpeechDeliveryVerified": true,
+      "actualNativeTranscriptionPreserved": true,
+      "ownedPhraseStrictlyMatched": false,
+      "inputClientsBeforeStart": 0,
+      "peakInputClients": 1,
+      "inputStartupMS": 376.32,
+      "firstTextMS": 2305.02,
+      "audioStartCondition": "input-ready",
+      "fixtureDurationSeconds": 4.167981859410431,
+      "fixtureHasExplicitLeadingAndTrailingSilence": true,
+      "closingInputReleasesNewAudioClients": true,
+      "latestChecks": 15,
+      "latestFailedChecks": 2,
+      "physicalRemoteVerified": false,
+      "microphoneStartedByDiagnostic": false,
+      "latestEvidenceRun": "run-20261105-072729-EB22150E",
+      "latestSourceRevision": "79dbd70c5c06ea2e3aa0c0204aefa46ff2e883c4",
+      "normalModeRestored": true,
+      "nativeMarkedTextDeliveryRecognized": true,
+      "strictMatchObservedRun": "run-20261105-072501-7D605E18",
+      "strictMatchConsistentlyVerified": false,
+      "scope": "Explicit owned speech through selected virtual input and system Dictation, no physical microphone or remote verification. Native delivery does not imply recognizer accuracy."
+    },
+    "playbackControlsLayout": {
+      "status": "passed",
+      "scope": "paused controls layout only, exported MTV content view",
+      "requestedWindowWidth": 1280,
+      "requestedWindowHeight": 720,
+      "timelineAndButtonsShareContainer": true
+    },
+    "playerTimeline": {
+      "status": "passed",
+      "checks": 26,
+      "testedEngines": [
+        "system",
+        "mpv"
+      ],
+      "scope": "remote action routing, native slider drag and system/MPV backend clocks; not physical remote or touchpad",
+      "nativePointerDragVerified": true,
+      "requestedScopeFullyVerified": true
+    },
+    "bilibiliFocusLayout": {
+      "status": "passed",
+      "samples": 18,
+      "requestedWindowWidth": 1280,
+      "requestedWindowHeight": 720,
+      "expandedTitleSamples": 1,
+      "maximumTitleHeight": 57,
+      "minimumStableLayoutMS": 500,
+      "allTitlesInsideViewport": true,
+      "imagesUsed": false,
+      "physicalRemoteVerified": false,
+      "scope": "one real homepage sample"
+    },
+    "localization": {
+      "status": "passed",
+      "defaultLocale": "system",
+      "resources": [
+        "en",
+        "zh-Hans"
+      ],
+      "verifiedSurfaces": [
+        "home",
+        "navigation",
+        "primary-settings",
+        "onboarding-and-remote-keymap",
+        "playback-track-speed-quality-volume-panels",
+        "detail-controls-and-player-labels",
+        "native-Chrome-access-errors",
+        "library-filter-sort-and-overview",
+        "source-picker-copy",
+        "audio-output-and-appearance-copy",
+        "watch-history-recovery-copy",
+        "localized-macOS-permission-descriptions",
+        "about-credits-and-native-licenses",
+        "locale-default-onscreen-keyboard-and-candidate-controls",
+        "unified-sign-in-and-Chrome-profile-display",
+        "SMB-and-folder-picker-controls",
+        "plugin-permission-review-and-localized-package-names",
+        "native-human-error-catalog-with-stable-protocol-codes",
+        "metadata-throttle-decisions-independent-of-language"
+      ],
+      "remaining": "Experimental hardware delivery is tracked separately; no automatic translation of provider/user content.",
+      "latestEnglishFullSuite": {
+        "status": "passed",
+        "checks": 176,
+        "evidenceRun": "run-20261105-063332-861A22A4",
+        "sourceRevision": "a070aa0ed1ceee0896f5c2a41055ffe28321adfb",
+        "sourceAndCredentialGuardsRetained": true,
+        "earlierFailuresPreserved": [
+          "run-20261105-062111-AF94B57A",
+          "run-20261105-062833-4D51A29B"
+        ]
+      },
+      "scope": "English and Simplified Chinese app interface, system-default input, native error descriptions and stable nonlocalized wire codes; user/profile/media/provider content remains verbatim.",
+      "allDirectFixedLiteralLookupKeysCovered": true
+    },
+    "examplePlugins": {
+      "status": "passed",
+      "scope": "Independent Gallery and Steam UI API 2 packages with managed lifecycle; async SDK acceptance is recorded separately.",
+      "independentNodeTests": 10,
+      "liveLifecycleChecks": 13,
+      "sameProcessHotUpdateCodeVerified": true,
+      "userPackagesPreserved": true,
+      "sourceConnectionsArePlugins": false,
+      "examples": [
+        "community.gallery",
+        "community.steam"
+      ],
+      "defaultRemovalPersistsAcrossRegistryRestart": true,
+      "cloudPhotoRegressionChecks": 7,
+      "cloudReferencesReleasedOnDisable": true,
+      "accountPreservedOnDisable": true,
+      "physicalSteamFullscreenReturnVerified": false,
+      "repository": "https://github.com/Force1ess/MacTV-Plugins",
+      "pinnedRevision": "dd41fd2",
+      "sourceManagement": "separate private repository, pinned examples submodule",
+      "catalogDiscoveryImplemented": true,
+      "sourceTransport": "git",
+      "actualSteamWindowReturnChecks": 5,
+      "latestLifecycleAfterAsyncProcessExitChange": true
+    },
+    "pluginSources": {
+      "status": "passed",
+      "transport": "system Git clone/fetch, shallow bare cache, immutable commit reads",
+      "uiChecks": 14,
+      "coreGitTests": 6,
+      "privateGitHubAuthenticationVerified": false,
+      "copiesSSHKeys": false,
+      "storesSeparateGitHubTokens": false,
+      "sourceDisableRemoveKeepsInstalled": true,
+      "defaultSource": "MacTV-Plugins"
+    },
+    "asyncPluginSDK": {
+      "status": "passed",
+      "apiVersion": 2,
+      "legacyVersion1Supported": true,
+      "realWorkerProtocolChecks": 4,
+      "nativeReadCancellationBeforeCompletionVerified": true,
+      "nativeConcurrency": 4,
+      "requestBudget": 64,
+      "independentSDKTests": 3,
+      "lifecycle": "request-scoped; no persistent background workers"
+    },
+    "steamGameHandoff": {
+      "status": "pending",
+      "actualGameLaunchVerified": false,
+      "foregroundPreservedDuringGame": false,
+      "returnedThroughSteamToMacTV": false,
+      "currentSteamDataRootGameManifests": 0,
+      "scope": "Big Picture window launch/fullscreen/close-return passed earlier; no identifiable installed Steam game was available in the inspected data root for real game handoff.",
+      "userConfirmedSteamLoggedIn": false,
+      "remaining": "User confirmed Steam is not logged in. Real game handoff needs the user account login and an installed macOS game; no login credentials are inferred or collected.",
+      "latestPreparation": {
+        "bigPictureOpened": true,
+        "declaredWindowObserved": true,
+        "userConfirmedSteamLoggedIn": false,
+        "credentialsRead": false,
+        "actualGameLaunchVerified": false,
+        "macTVHomeRestored": true
+      }
+    },
+    "voiceCall": {
+      "status": "pending",
+      "callConnectionVerified": false,
+      "physicalMicrophoneDeliveryVerified": false,
+      "shortcutPostingAndNativeKeyRoutingVerified": true,
+      "scope": "Configured wireless-microphone key and documented Codex shortcut are implemented; sending keys does not establish a connected voice call or physical audio delivery.",
+      "latestReadOnlyInspection": {
+        "available": true,
+        "menuBarsRead": 1,
+        "menuNodesVisited": 212,
+        "truncated": false,
+        "matchedVoiceCommands": 0,
+        "callConnectionVerified": false,
+        "scope": "Bounded command/button metadata only; no call or microphone started. Absence of an observed command does not prove account feature unavailability."
+      }
+    }
+  },
+  "experimentalModules": {
+    "steam": {
+      "implementation": "fixed manifest application launch and fullscreen-window lifecycle tracker",
+      "installedOnTestMac": true,
+      "physicalModeReturnVerified": false,
+      "independentPackage": true,
+      "managedInstallation": true,
+      "actualWindowReturnVerified": true,
+      "actualFullscreenVerified": true,
+      "coldAndWarmStartupVerified": true,
+      "sameHostProcessVerified": true,
+      "lastWindowCloseExitedSteam": true,
+      "physicalRemoteVerified": false
+    },
+    "gallery": {
+      "status": "partial",
+      "localPictureBrowserAndViewer": true,
+      "realGeneratedFixtureChecks": 6,
+      "scopeAndInjectionUnitTests": 2,
+      "cloudPhotos": "implemented; connected Quark wallpaper original decoded in 1.17 seconds",
+      "previewGeneration": "two bounded concurrent reads; memory-only account-bound cache",
+      "cloudPhotoOriginalAndNextVerified": true,
+      "cloudPhotoBackspaceReturnVerified": true,
+      "nativePreviewDecodeVerified": true,
+      "previewProviderRefusalObserved": 401,
+      "deniedPreviewUsesAuthorizedOriginal": true,
+      "thumbnailCookiesForwarded": false,
+      "previewProbeScope": "current gallery photo only; decoded dimensions and counters, no pixels or URLs exported",
+      "independentPackage": true,
+      "managedInstallation": true,
+      "resourcePort": "photos"
+    },
+    "music": {
+      "status": "partial",
+      "publicMusicLibraryReader": "isolated-helper-with-deadline-and-parent-watch",
+      "localUnprotectedAudioPlayer": true,
+      "realLibraryPlaybackVerified": true,
+      "albumsAndPlaylists": "verified real album and playlist navigation, including contained tracks",
+      "realLibraryResult": "ready after public Music application initialization",
+      "observedTimeoutSeconds": 12.74,
+      "localSongs": 21,
+      "albums": 19,
+      "playlists": 4,
+      "automaticNextTrackVerified": true
+    },
+    "voice": {
+      "interfaceAndBackNavigationVerified": true,
+      "physicalVoiceCallVerified": false,
+      "receiver": "wireless microphone preference or recorded modifier/function/shortcut",
+      "defaultCodexShortcut": "Control-Shift-V after foreground activation",
+      "systemPostEventPermissionVerified": true
+    }
+  },
+  "deferredByUser": [
+    "Netflix",
+    "Apple TV",
+    "ddys"
+  ],
+  "developmentStorage": {
+    "status": "passed",
+    "generatedAppBundlesArchived": 759,
+    "archivedBytes": 120865153025,
+    "systemFreeGiBBefore": 2.4,
+    "systemFreeGiBAfter": 116,
+    "recentRollbackCopiesPerDirectory": 3,
+    "sourceMediaModified": false,
+    "accountOrSigningDataMoved": false,
+    "testEvidencePreserved": true,
+    "archiveRequiresMountedExternalVolume": true,
+    "archiveConfigurationIsLocalOnly": true
+  },
+  "installedDevelopmentApp": {
+    "sourceRevision": "491192e698768be4a9f20864df983d9a7f37875f",
+    "normalMode": true,
+    "fullscreen": true,
+    "audioOutput": "tv",
+    "accountImportControlEnabled": false,
+    "pluginManagementControlEnabled": false,
+    "libraryFiles": 387
+  },
+  "remainingExternalPrerequisites": [
+    {
+      "area": "steamGameHandoff",
+      "required": "User Steam sign-in and an installed macOS game",
+      "confirmedMissing": true
+    },
+    {
+      "area": "physicalOutputAndVoice",
+      "required": "Physical remote/microphone and television sound/color evidence",
+      "verified": false
+    },
+    {
+      "area": "hostedCI",
+      "required": "Resolve GitHub account payment/spending-limit restriction; latest job executed no steps",
+      "verifiedRun": "https://github.com/Force1ess/MacTV/actions/runs/41964428482"
+    },
+    {
+      "area": "publicDistribution",
+      "required": "Authorized public distribution identity/signing and final binary release review",
+      "developerIDIdentitiesOnMini": 0
+    }
+  ]
+}

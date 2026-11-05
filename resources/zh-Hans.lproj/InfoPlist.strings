@@ -1,0 +1,5 @@
+/* Localized macOS permission prompts. */
+"NSRemovableVolumesUsageDescription" = "MacTV 读取你选择的外置硬盘中的影片与照片，不会修改原文件。";
+"NSNetworkVolumesUsageDescription" = "MacTV 读取并播放你选择的网络文件夹中的媒体，不会修改原文件。";
+"NSLocalNetworkUsageDescription" = "MacTV 连接你选择的 NAS 与本地媒体服务。";
+"NSAppleMusicUsageDescription" = "MacTV 读取本机“音乐”资料库，用于浏览并播放已下载、未受保护的歌曲。";

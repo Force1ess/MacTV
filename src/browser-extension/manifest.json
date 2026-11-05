@@ -1,0 +1,20 @@
+{
+  "manifest_version": 3,
+  "name": "MacTV 平台登录连接",
+  "version": "0.2.0",
+  "description": "点击后仅导入所选平台（夸克或哔哩哔哩）的登录，并由本机MacTV验证。",
+  "permissions": [
+    "cookies",
+    "nativeMessaging"
+  ],
+  "host_permissions": [
+    "https://drive.quark.cn/*",
+    "https://pan.quark.cn/*",
+    "https://api.bilibili.com/*",
+    "https://www.bilibili.com/*"
+  ],
+  "action": {
+    "default_popup": "popup.html"
+  },
+  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA2qdP0MifkEmM0PCUK3vvSSh3jbFX/+HwiSf1yd1hx3OrDQIqQXmbGeoCNeKhE0jL/ebjS4I0lNGeoItqpLYMUOcLGoWzx978cayAeUImTBYTxZOyibrXzPONLfKf6MM8iLRmYQKgoghNx3bC6MHjLxXwJnADrFl+xUegclUC5fz+3fsWxHd/U/N7/82dbSOS/bxCZgTPkhMnFZ6CHZI8DrDuS84GkONSoStzcR71ZxKxQ6QD9yF8fELpkbe8CmvBo4CNyPSHDdZ53NqHkPcfTM+gUyjWDxglk9iRp1ewEzZxDazNJoz7gz2jm76PRPu4++edZZ1sC/hlt5y1b+fIAQIDAQAB"
+}

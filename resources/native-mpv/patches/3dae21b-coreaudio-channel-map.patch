@@ -1,0 +1,76 @@
+From 3dae21b1ed4793912a8f9de1c5eb3cf32d227bce Mon Sep 17 00:00:00 2001
+From: der richter <der.richter@gmx.de>
+Date: Sat, 24 Oct 2026 14:11:20 +0200
+Subject: [PATCH] ao_coreaudio: remove misusage of audio unit channel map API
+
+we are misusing the audio unit API to set properties for the
+kAudioOutputUnitProperty_ChannelMap property, by passing a
+AudioChannelLayout instead of an array of SInt32 as required. why this
+worked at all, prior to macOS 27, can only be assumed. with the release
+of macOS 27 this throws a hard error, preventing coreaudio from being
+initialised completely and falling back to av_foundation.
+
+introduced in PR #15622
+commit 06fe665b789ffca7c6716cd4ca2fec7e2d0f54be
+
+this PR fixed the problem in #15584, probably by coincidence.
+
+partially revert the changes from mentioned PR/commit on the coreaudio
+side and reintroducing #15584. this wasn't completely and properly fixed
+anyway.
+
+Fixes #18384
+---
+ audio/out/ao_coreaudio.c | 17 +++--------------
+ 1 file changed, 3 insertions(+), 14 deletions(-)
+
+diff --git a/audio/out/ao_coreaudio.c b/audio/out/ao_coreaudio.c
+index 7d421390e9dc3..97eac49542582 100644
+--- a/audio/out/ao_coreaudio.c
++++ b/audio/out/ao_coreaudio.c
+@@ -136,7 +136,7 @@ static int control(struct ao *ao, enum aocontrol cmd, void *arg)
+     return CONTROL_UNKNOWN;
+ }
+ 
+-static bool init_audiounit(struct ao *ao, AudioStreamBasicDescription asbd, AudioChannelLayout *layout, size_t layout_size);
++static bool init_audiounit(struct ao *ao, AudioStreamBasicDescription asbd);
+ static void init_physical_format(struct ao *ao);
+ static void reinit_latency(struct ao *ao);
+ static bool register_hotplug_cb(struct ao *ao);
+@@ -176,13 +176,8 @@ static int init(struct ao *ao)
+ 
+     AudioStreamBasicDescription asbd;
+     ca_fill_asbd(ao, &asbd);
+-    size_t layout_size;
+-    AudioChannelLayout *layout = ca_get_acl(ao, &layout_size);
+ 
+-    bool r = init_audiounit(ao, asbd, layout, layout_size);
+-    talloc_free(layout);
+-
+-    if (!r)
++    if (!init_audiounit(ao, asbd))
+         goto coreaudio_error;
+ 
+     if (!register_hotplug_cb(ao))
+@@ -279,7 +274,7 @@ static void init_physical_format(struct ao *ao)
+     talloc_free(tmp);
+ }
+ 
+-static bool init_audiounit(struct ao *ao, AudioStreamBasicDescription asbd, AudioChannelLayout *layout, size_t layout_size)
++static bool init_audiounit(struct ao *ao, AudioStreamBasicDescription asbd)
+ {
+     OSStatus err;
+     uint32_t size;
+@@ -323,12 +318,6 @@ static bool init_audiounit(struct ao *ao, AudioStreamBasicDescription asbd, Audi
+     CHECK_CA_ERROR_L(coreaudio_error_audiounit,
+                      "can't link audio unit to selected device");
+ 
+-    err = AudioUnitSetProperty(p->audio_unit,
+-                               kAudioOutputUnitProperty_ChannelMap,
+-                               kAudioUnitScope_Global, 0, layout, layout_size);
+-
+-    CHECK_CA_ERROR_L(coreaudio_error_audiounit,
+-                     "unable to set the input channel layout on the audio unit");
+ 
+     AURenderCallbackStruct render_cb = (AURenderCallbackStruct) {
+         .inputProc       = render_cb_lpcm,

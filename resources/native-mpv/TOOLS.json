@@ -1,0 +1,12 @@
+{
+  "schema": 1,
+  "mesonPyPIPackage": "meson==1.9.2",
+  "ninjaPyPIPackage": "ninja==1.13.0",
+  "pkgconfBottle": {
+    "version": "3.0.10",
+    "platform": "arm64_sequoia",
+    "url": "https://ghcr.io/v2/homebrew/core/pkgconf/blobs/sha256:813592d1417f9cd219200d674b81fce9f7b9e5cc86cbdc9022b16ce833c42aa8",
+    "upstreamSHA256": "813592d1417f9cd219200d674b81fce9f7b9e5cc86cbdc9022b16ce833c42aa8"
+  },
+  "scope": "Project-local build tools only, not distributed runtime dependencies. No system package installation."
+}

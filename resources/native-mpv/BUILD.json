@@ -1,0 +1,34 @@
+{
+  "schema": 1,
+  "baseVersion": "0.41.0",
+  "upstreamFix": "3dae21b1ed4793912a8f9de1c5eb3cf32d227bce",
+  "patch": "patches/3dae21b-coreaudio-channel-map.patch",
+  "mesonVersion": "1.9.2",
+  "ninjaVersion": "1.13.0",
+  "pkgconfVersion": "3.0.10",
+  "vulkanHeaders": {
+    "version": "1.4.363",
+    "commit": "6802bb4733b63ed5efd3adb308a6c885ef180ea1",
+    "url": "https://codeload.github.com/KhronosGroup/Vulkan-Headers/tar.gz/6802bb4733b63ed5efd3adb308a6c885ef180ea1",
+    "sha256": "9044fbb356160e43201dc2094acb44c8a906722a63a35f48fc0f051579db9bb6"
+  },
+  "mesonOptions": [
+    "-Dlibmpv=true",
+    "-Dcplayer=false",
+    "-Dbuild-date=false",
+    "-Dhtml-build=disabled",
+    "-Dmanpage-build=disabled",
+    "-Dpdf-build=disabled",
+    "-Djavascript=enabled",
+    "-Dlua=luajit",
+    "-Dlibarchive=enabled",
+    "-Duchardet=enabled",
+    "-Dvulkan=enabled",
+    "-Dcocoa=enabled",
+    "-Dcoreaudio=enabled",
+    "-Davfoundation=enabled",
+    "-Dvapoursynth=disabled"
+  ],
+  "deploymentTarget": "15.0",
+  "bottleTag": "arm64_sequoia"
+}

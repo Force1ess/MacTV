@@ -1,0 +1,4 @@
+patch:
+  # TV searches do not need a persistent history of typed phrases.
+  translator/enable_user_dict: false
+  translator/enable_sentence: true

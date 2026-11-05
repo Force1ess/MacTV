@@ -1,0 +1,5 @@
+/* Localized macOS permission prompts. */
+"NSRemovableVolumesUsageDescription" = "MacTV reads films and photos from the external drives you choose. Your files are not changed.";
+"NSNetworkVolumesUsageDescription" = "MacTV reads and plays media from the network folders you choose. Your files are not changed.";
+"NSLocalNetworkUsageDescription" = "MacTV connects to the NAS and local media services you choose.";
+"NSAppleMusicUsageDescription" = "MacTV reads your local Music library to browse and play downloaded, unprotected tracks.";

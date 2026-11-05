@@ -1,0 +1,27 @@
+{
+  "id": "mtv.example",
+  "name": "Developer Example",
+  "version": "0.1.0",
+  "apiVersion": 1,
+  "entry": "plugin.js",
+  "domains": [],
+  "capabilities": [
+    "browse",
+    "search",
+    "folders",
+    "resolve",
+    "lookup",
+    "watchlist",
+    "continuation"
+  ],
+  "presentation": {
+    "symbol": "puzzlepiece.extension",
+    "tint": "indigo",
+    "summary": "Native pages driven by plugin data",
+    "developerOnly": true
+  },
+  "localizedNames": {
+    "en": "Developer Example",
+    "zh-Hans": "开发示例"
+  }
+}

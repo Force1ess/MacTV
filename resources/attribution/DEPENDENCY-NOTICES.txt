@@ -1,0 +1,13 @@
+MacTV third-party acknowledgements
+
+This software is based in part on the work of the Independent JPEG Group.
+
+MacTV uses the FreeType font engine (https://freetype.org).
+The complete FreeType licenses and copyright notices are included in this
+application's open-source license catalog and corresponding-source materials.
+
+The libjpeg-turbo license summary, IJG README, FreeType full license and all
+collected runtime notices retain their original wording. Third-party components
+and marks are not MacTV authorship or endorsements.
+
+TMDB and TVmaze data-source acknowledgements are also displayed in About MacTV.

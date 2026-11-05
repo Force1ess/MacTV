@@ -1,0 +1,6 @@
+# MTV's private configuration. Does not modify the system/user's Rime setup.
+patch:
+  schema_list:
+    - schema: luna_pinyin_simp
+  menu/page_size: 7
+  switcher/hotkeys: []

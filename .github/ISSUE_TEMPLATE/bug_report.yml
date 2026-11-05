@@ -1,0 +1,30 @@
+name: 问题报告
+description: 播放、遥控、登录或资料库问题
+body:
+  - type: markdown
+    attributes:
+      value: 请勿上传 Cookie、令牌、浏览器数据库或私人媒体索引。
+  - type: input
+    id: version
+    attributes:
+      label: MacTV 与 macOS 版本
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: 复现步骤
+      description: 从哪个页面开始、按了什么键、选择了什么选项？
+    validations:
+      required: true
+  - type: textarea
+    id: behavior
+    attributes:
+      label: 预期与实际结果
+    validations:
+      required: true
+  - type: textarea
+    id: media
+    attributes:
+      label: 播放问题补充
+      description: 可填写容器、编码、HDR 类型和输出设备，不要上传影片或包含凭证的地址。

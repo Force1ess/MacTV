@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 2,
+  "defaultSources": [
+    {
+      "id": "org.mactv.official",
+      "name": "MacTV Official",
+      "repository": "git@github.com:Force1ess/MacTV-Plugins.git",
+      "reference": "main",
+      "enabled": true
+    }
+  ]
+}
