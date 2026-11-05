@@ -63,6 +63,42 @@ struct AutomaticMetadataTests {
     #expect(AutomaticMetadata.uniqueMatch(target: unknownYear, candidates: [correct]) == nil)
     #expect(AutomaticMetadata.uniqueMatch(target: target, candidates: [wrong]) == nil)
   }
+  @Test func yearlessMovieNeedsUniqueDatedArtworkAndNonNumericTitle() throws {
+    let target = try #require(AutomaticMetadata.targets(files: [movie("Arrival", year: nil)], matches: [:]).first)
+    let candidate = MetadataCandidate(provider: .tmdb, externalID: 1, kind: .movie, title: "Arrival", year: 2016,
+      poster: "https://image.tmdb.org/t/p/w500/poster.jpg")
+    let remake = MetadataCandidate(provider: .tmdb, externalID: 2, kind: .movie, title: "Arrival", year: 1996)
+    #expect(AutomaticMetadata.uniqueMatch(target: target, candidates: [candidate]) == candidate)
+    #expect(AutomaticMetadata.uniqueMatch(target: target, candidates: [candidate, remake]) == nil)
+    let numeric = try #require(AutomaticMetadata.targets(files: [movie("2026", year: nil)], matches: [:]).first)
+    let numberTitle = MetadataCandidate(provider: .tmdb, externalID: 3, kind: .movie, title: "2026", year: 2026,
+      poster: "https://image.tmdb.org/t/p/w500/poster.jpg")
+    #expect(AutomaticMetadata.uniqueMatch(target: numeric, candidates: [numberTitle]) == nil)
+  }
+
+  @Test func bilingualSeriesUsesLocalizedProviderAndRetainsTokenFreeSearch() async throws {
+    struct Client: MetadataSearching {
+      func search(query: String, kind: MetadataKind, provider: MetadataProvider, token: String?) async throws -> [MetadataCandidate] {
+        switch (provider, query) {
+        case (.tmdb, "恶搞之家"):
+          #expect(token == "fixture")
+          return [.init(provider: provider, externalID: 1, kind: kind, title: query,
+            poster: "https://image.tmdb.org/t/p/w500/poster.jpg")]
+        case (.tvmaze, "Family Guy"):
+          #expect(token == nil)
+          return [.init(provider: provider, externalID: 2, kind: kind, title: query,
+            poster: "https://static.tvmaze.com/poster.jpg")]
+        default: return []
+        }
+      }
+    }
+    let episode = MediaItem(id: "episode", title: "First", localMetadata: LocalMediaMetadata(
+      seriesTitle: "恶搞之家 Family Guy", seriesRoot: "/show", season: 1, episode: 1, hasSidecar: false))
+    let target = try #require(AutomaticMetadata.targets(files: [episode], matches: [:]).first)
+    #expect(try await AutomaticMetadata.resolve(target: target, client: Client(), token: "fixture")?.title == "恶搞之家")
+    #expect(try await AutomaticMetadata.resolve(target: target, client: Client(), token: nil)?.title == "Family Guy")
+  }
+
   @Test func automaticWriteDoesNotReplaceExistingAndLaterNFOWins() throws {
     let root = FileManager.default.temporaryDirectory.appendingPathComponent(
       "mtv-auto-" + UUID().uuidString)

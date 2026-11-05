@@ -3,6 +3,45 @@ import Testing
 @testable import MTVCore
 
 struct LibraryInventoryTests {
+  @Test func rootMovieVersionsKeepArtworkFromEitherFile() throws {
+    let root = URL(fileURLWithPath: "/owned")
+    let original = root.appendingPathComponent("Movie.mkv")
+    let duplicate = root.appendingPathComponent("Movie-abcdef123456.mkv")
+    let files = [
+      MediaItem(id: original.path, title: "Movie", url: original.absoluteString),
+      MediaItem(id: duplicate.path, title: "Movie", poster: "file:///owned/poster.jpg", url: duplicate.absoluteString),
+    ]
+    let report = LibraryInventoryReport(root: root, basis: "fixture", files: files)
+    let card = try #require(report.rootCards.first)
+    #expect(report.rootCards.count == 1)
+    #expect(card.kind == .versions)
+    #expect(card.poster == "file:///owned/poster.jpg")
+    #expect(report.collections[card.id]?.count == 2)
+  }
+
+  @Test func seasonFoldersBracketEpisodesAndZeroNumberSpecialsStayInTheirSeries() throws {
+    let root = FileManager.default.temporaryDirectory.appendingPathComponent("mtv-release-names-" + UUID().uuidString)
+    defer { try? FileManager.default.removeItem(at: root) }
+    let names = [
+      "Example S02 第二季 (2026)/S02E01.2026.2160p.mkv",
+      "Animation/Example Animation [01].mkv",
+      "Animation/Example Animation [02].mkv",
+      "[Team][示例动画 第四季][全集]/[Team][Example Show][4th - 01][总第67][1080p].mkv",
+      "Sitcom/Season 24/Sitcom.S24E00.Holiday.1080p.mkv",
+    ]
+    for name in names + (1...6).map({ String(format: "别名/另一部动画 %02d.mkv", $0) }) {
+      let file = root.appendingPathComponent(name)
+      try FileManager.default.createDirectory(at: file.deletingLastPathComponent(), withIntermediateDirectories: true)
+      try Data().write(to: file)
+    }
+    let files = try LibraryScanner.scan(root: root)
+    let catalog = LibraryCatalog.build(files)
+    #expect(Set(catalog.root.map(\.title)) == ["Example", "Example Animation", "Sitcom", "示例动画", "另一部动画"])
+    #expect(catalog.root.allSatisfy { $0.kind == .series })
+    #expect(files.contains { $0.title == "第1集" && $0.localMetadata?.season == 2 })
+    #expect(files.contains { $0.title == "Holiday" && $0.localMetadata?.episode == 0 })
+  }
+
   @Test func realReleaseShapesKeepEpisodesAndExtrasOutOfMovieWall() throws {
     let root = FileManager.default.temporaryDirectory.appendingPathComponent("mtv-organize-" + UUID().uuidString)
     defer { try? FileManager.default.removeItem(at: root) }

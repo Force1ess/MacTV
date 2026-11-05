@@ -64,12 +64,11 @@ import MTVCore
         // will continue the unfinished batch without showing a modal sheet.
         guard !model.playbackPresented else { return }
         self.attempts[target.id] = Date()
-        if target.kind == .movie, target.year == nil || token == nil { continue }
+        if target.kind == .movie, token == nil { continue }
         do {
-          let candidates = try await client.search(query: target.item.title, kind: target.kind,
-            provider: target.provider, token: target.provider == .tmdb ? token : nil)
+          let match = try await AutomaticMetadata.resolve(target: target, client: client, token: token)
           guard !Task.isCancelled, self.generation == attempt, model.mediaRoot == source else { return }
-          if let match = AutomaticMetadata.uniqueMatch(target: target, candidates: candidates) {
+          if let match {
             _ = try model.automaticMetadata.onMatch?(target.item, match)
           }
         } catch {

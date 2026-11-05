@@ -146,7 +146,7 @@ struct LibraryIncrementalTests {
     let legacy = LibraryIncrementalState(root: root, items: [stale], manifest: legacyManifest)
     let upgraded = try LibraryScanner.scanResult(root: root, previous: legacy)
     #expect(upgraded.reusedCount == 0 && upgraded.items.first?.localMetadata?.isExtra == true)
-    #expect(upgraded.incremental?.manifest.metadataParserVersion == 6)
+    #expect(upgraded.incremental?.manifest.metadataParserVersion == incremental.manifest.metadataParserVersion)
     let warm = try LibraryScanner.scanResult(root: root, previous: upgraded.incremental)
     #expect(warm.reusedCount == 1 && warm.items.first?.localMetadata?.isExtra == true)
   }

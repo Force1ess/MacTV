@@ -90,12 +90,14 @@ public enum MediaRecognition {
     ]
     for pattern in patterns {
       if let groups = match(pattern, text), let season = Int(groups[2]),
-        let episode = Int(groups[3]), episode > 0
+        let episode = Int(groups[3]), episode >= 0
       {
         let end = Int(groups[4]).flatMap { $0 >= episode && $0 - episode <= 100 ? $0 : nil }
         let name = cleanTitle(withoutReleaseTags(groups[5]))
+        let episodeTitle = name.isEmpty || name.range(of: #"^(?:19|20)\d{2}$"#, options: .regularExpression) != nil
+          ? "第\(episode)集" : name
         return RecognizedFilename(
-          title: name.isEmpty ? "第\(episode)集" : name,
+          title: episodeTitle,
           seriesTitle: displayStem(groups[1]), season: season, episode: episode, episodeEnd: end)
       }
     }
@@ -105,8 +107,17 @@ public enum MediaRecognition {
     if let special = match(#"\[(\d{1,3})\((?:OAD|OVA|SP)\)\]"#, text), let number = Int(special[1]) {
       return RecognizedFilename(title: "特别篇 \(number)")
     }
+    if let groups = match(#"^\[([^\]]+)\]\[([^\]]+)\]\[(\d{1,2})(?:st|nd|rd|th)\s*-\s*(\d{1,4})\]\[(?:总第|EP)\s*\d{1,4}\]"#, text),
+      let season = Int(groups[3]), season > 0, let episode = Int(groups[4]), episode > 0 {
+      let folder = file.deletingLastPathComponent().lastPathComponent
+      let localized = match(#"^\[([^\]]+)\]\[([^\]]+)\]"#, folder).flatMap { parts in
+        parts[1] == groups[1] && MetadataStore.containsChinese(parts[2])
+          ? seriesTitle(parts[2], season: season) : nil
+      }
+      return RecognizedFilename(title: "第\(episode)集", seriesTitle: localized ?? cleanTitle(groups[2]), season: season, episode: episode)
+    }
     let anime = text.replacingOccurrences(of: #"^\[[^\]]+\]\s*"#, with: "", options: .regularExpression)
-    if let groups = match(#"^(.+?)[ ._-]*\[(\d{1,3})\](?:[ ._-]*\[[^\]]+\])+$"#, anime),
+    if let groups = match(#"^(.+?)[ ._-]*\[(\d{1,3})\](?:[ ._-]*\[[^\]]+\])*$"#, anime),
       let episode = Int(groups[2]), episode > 0 {
       return RecognizedFilename(title: "第\(episode)集", seriesTitle: displayStem(groups[1]), season: 1, episode: episode)
     }
@@ -139,14 +150,21 @@ public enum MediaRecognition {
   /// corroborating adjacent episodes. Standalone movie sequel digits, years,
   /// resolutions and unrelated parent titles do not supply that evidence.
   static func numberedEpisodeCandidate(_ file: URL) -> RecognizedFilename? {
-    guard let parent = match(#"^(.+?)\s*[\[(]((?:18|19|20|21)\d{2})[\])](?:[ ._-].*)?$"#, file.deletingLastPathComponent().lastPathComponent),
+    let folder = file.deletingLastPathComponent().lastPathComponent
+    let stem = releaseStem(file)
+    if let parent = match(#"^(.+?)\s*[\[(]((?:18|19|20|21)\d{2})[\])](?:[ ._-].*)?$"#, folder),
       let year = Int(parent[2]),
-      let parts = match(#"^(.+?)[ ._-]+(0[1-9]|[1-9][0-9]{1,2})[ ._-]+(.+)$"#, releaseStem(file)),
+      let parts = match(#"^(.+?)[ ._-]+(0[1-9]|[1-9][0-9]{1,2})[ ._-]+(.+)$"#, stem),
       !cleanTitle(parent[1]).isEmpty,
       cleanTitle(parts[1]).compare(cleanTitle(parent[1]), options: [.caseInsensitive, .diacriticInsensitive]) == .orderedSame,
-      let episode = Int(parts[2]), !cleanTitle(parts[3]).isEmpty else { return nil }
-    return RecognizedFilename(title: cleanTitle(parts[3]), year: year,
-      seriesTitle: cleanTitle(parent[1]), season: 1, episode: episode)
+      let episode = Int(parts[2]), !cleanTitle(parts[3]).isEmpty {
+      return RecognizedFilename(title: cleanTitle(parts[3]), year: year,
+        seriesTitle: cleanTitle(parent[1]), season: 1, episode: episode)
+    }
+    // Compact release names are only classified after checking siblings.
+    guard let parts = match(#"^(.*\p{Han})[ ._-]*(\d{2})$"#, stem),
+      let episode = Int(parts[2]), episode > 0 else { return nil }
+    return RecognizedFilename(title: "第\(episode)集", seriesTitle: parts[1], season: 1, episode: episode)
   }
   static func numberedEpisodes(in folder: URL, filenames: Set<String>) -> [String: RecognizedFilename] {
     guard !filenames.contains(where: { $0.lowercased() == "movie.nfo" }) else { return [:] }
@@ -154,9 +172,28 @@ public enum MediaRecognition {
     for name in filenames where LibraryScanner.extensions.contains(URL(fileURLWithPath: name).pathExtension.lowercased()) {
       if let hint = numberedEpisodeCandidate(folder.appendingPathComponent(name)) { hints[name] = hint }
     }
-    let numbers = Set(hints.values.compactMap(\.episode))
-    guard numbers.contains(where: { numbers.contains($0 + 1) }) else { return [:] }
-    return hints
+    let groups = Dictionary(grouping: hints) { $0.value.seriesTitle }
+    return Dictionary(uniqueKeysWithValues: groups.values.flatMap { group -> [(String, RecognizedFilename)] in
+      let numbers = Set(group.compactMap { $0.value.episode })
+      guard let hint = group.first?.value, let title = hint.seriesTitle else { return [] }
+      let supported: Bool
+      if hint.year != nil {
+        supported = numbers.contains { numbers.contains($0 + 1) }
+      } else {
+        // Require more evidence when the enclosing folder uses a short alias.
+        let minimum = folder.lastPathComponent.contains(title) ? 3 : 6
+        supported = numbers.isSuperset(of: 1...minimum)
+      }
+      return supported ? group : []
+    })
+  }
+  static func seriesTitle(_ name: String, season: Int) -> String {
+    let title = displayStem(name).replacingOccurrences(of: #"\]\s+(?=\S)"#, with: " ", options: .regularExpression)
+    let seasonMarker = #"(?i)[ ._-]+(?:S0*\#(season)\b|Season[ ._-]*0*\#(season)\b|第[一二三四五六七八九十0-9]+季)"#
+    if let marker = title.range(of: seasonMarker, options: .regularExpression) {
+      return cleanTitle(String(title[..<marker.lowerBound]))
+    }
+    return title
   }
   public static func isSeasonDirectory(_ name: String) -> Bool {
     match(#"^(?:season[ ._-]*\d{1,2}|s\d{1,2}|第\d{1,2}季|specials)$"#, name) != nil
@@ -214,7 +251,8 @@ public struct LibraryCatalog {
       let sorted = values.sorted { $0.id.localizedStandardCompare($1.id) == .orderedAscending }
       let first = sorted[0], id = "mtv:versions:" + key
       output.append(MediaItem(id: id, title: first.title, subtitle: "\(sorted.count) 个版本", overview: first.overview,
-        poster: first.poster ?? first.localMetadata?.seriesPoster, reference: id, kind: .versions,
+        poster: sorted.lazy.compactMap { $0.poster ?? $0.localMetadata?.seriesPoster }.first,
+        reference: id, kind: .versions,
         localMetadata: first.localMetadata, metadataAttribution: first.metadataAttribution,
         addedAt: values.compactMap(\.addedAt).max()))
       catalog.children[id] = sorted.enumerated().map { offset, original in
@@ -230,16 +268,20 @@ public struct LibraryCatalog {
       }
       groups[key, default: []].append(item)
     }
+    var rootCards: [MediaItem] = []
     for (key, values) in Dictionary(grouping: rootFiles, by: { item in
       guard let url = item.url.flatMap(URL.init(string:)), url.isFileURL else { return item.id }
       return item.source + ":" + url.deletingLastPathComponent().path + "/" + MediaRecognition.releaseStem(url)
     }).sorted(by: { $0.key < $1.key }) {
-      appendVersions(values, key: key, to: &catalog.root)
+      appendVersions(values, key: key, to: &rootCards)
     }
+    catalog.root = rootCards
     for (key, episodes) in groups {
-      let first = episodes.sorted { $0.id < $1.id }[0]
+      let ordered = episodes.sorted { $0.id < $1.id }
+      let first = ordered[0]
       let title = first.localMetadata!.seriesTitle!
       let seriesID = "mtv:series:" + key
+      let seriesPoster = ordered.lazy.compactMap { $0.localMetadata?.seriesPoster }.first
       let seasons = Dictionary(grouping: episodes) { $0.localMetadata!.season! }
       var seasonCards: [MediaItem] = []
       for season in seasons.keys.sorted() {
@@ -254,7 +296,7 @@ public struct LibraryCatalog {
           MediaItem(
             id: id, title: season == 0 ? "特别篇" : "第 \(season) 季",
             subtitle: "\(sorted.count) 个视频", overview: first.localMetadata?.seriesOverview ?? "",
-            poster: first.localMetadata?.seriesPoster ?? first.poster, reference: id, kind: .season,
+            poster: seriesPoster ?? sorted.lazy.compactMap(\.poster).first, reference: id, kind: .season,
             localMetadata: sorted.contains(where: { $0.localMetadata?.metadataReadFailed == true }) ? LocalMediaMetadata(metadataReadFailed: true) : nil,
             metadataAttribution: first.metadataAttribution, addedAt: sorted.compactMap(\.addedAt).max())
         )
@@ -279,7 +321,7 @@ public struct LibraryCatalog {
           id: seriesID, title: title,
           subtitle: seasonLabel + " · " + L("\(episodeCount) 集"),
           overview: first.localMetadata?.seriesOverview ?? "选择季，浏览并播放剧集。",
-          poster: first.localMetadata?.seriesPoster ?? first.poster, reference: seriesID,
+          poster: seriesPoster ?? ordered.lazy.compactMap(\.poster).first, reference: seriesID,
           kind: .series, localMetadata: episodes.contains(where: { $0.localMetadata?.metadataReadFailed == true }) ? LocalMediaMetadata(metadataReadFailed: true) : nil,
           metadataAttribution: first.metadataAttribution, addedAt: episodes.compactMap(\.addedAt).max()))
       catalog.children[seriesID] = seasonCards

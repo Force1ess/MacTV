@@ -312,7 +312,7 @@ public enum LibraryScanner {
       if document?.isMovie == true { hint = filenameHint }
       let fields = document?.fields ?? [:]
       let season = number(fields["season"], range: 0...99) ?? hint.season
-      let episode = number(fields["episode"], range: 1...9999) ?? hint.episode
+      let episode = number(fields["episode"], range: 0...9999) ?? hint.episode
       let show = episode == nil ? nil : showContext(folder)
       var metadata = LocalMediaMetadata(
         year: number(fields["year"], range: 1800...2199) ?? hint.year)
@@ -331,10 +331,10 @@ public enum LibraryScanner {
           show?.root
           ?? (MediaRecognition.isSeasonDirectory(folder.lastPathComponent)
             ? folder.deletingLastPathComponent() : folder)
-        let inferredTitle = hint.seriesTitle.flatMap { $0.isEmpty ? nil : $0 }
+        let inferredTitle = hint.seriesTitle.map { MediaRecognition.seriesTitle($0, season: season) }.flatMap { $0.isEmpty ? nil : $0 }
         metadata.seriesTitle =
           fields["showtitle"] ?? show?.document.fields["title"]
-          ?? inferredTitle ?? MediaRecognition.cleanTitle(seriesRoot.lastPathComponent)
+          ?? inferredTitle ?? MediaRecognition.seriesTitle(seriesRoot.lastPathComponent, season: season)
         metadata.seriesRoot = seriesRoot.path
         metadata.season = season
         metadata.episode = episode

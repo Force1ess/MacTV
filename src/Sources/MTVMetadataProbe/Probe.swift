@@ -65,35 +65,49 @@ import MTVCore
       }, "credentialsRead": false, "libraryModified": false])
       return values.isEmpty ? 1 : 0
     }
-    guard Set(args).isSubset(of: ["--audit-selected", "--apply-automatic", "--require-complete", "--use-saved-tmdb"]), Set(args).count == args.count else {
+    let limits = args.filter { $0.hasPrefix("--limit=") }
+    let offsets = args.filter { $0.hasPrefix("--offset=") }
+    guard limits.count <= 1, offsets.count <= 1,
+      let limit = Int(limits.first.map { String($0.dropFirst("--limit=".count)) } ?? "64"), (0...64).contains(limit),
+      let offset = Int(offsets.first.map { String($0.dropFirst("--offset=".count)) } ?? "0"), offset >= 0,
+      Set(args.filter { !limits.contains($0) && !offsets.contains($0) }).isSubset(of: ["--audit-selected", "--apply-automatic", "--require-complete", "--use-saved-tmdb", "--rescan"]),
+      Set(args).count == args.count else {
       throw MTVError.message("识别审计参数无效")
     }
     let apply = args.contains("--apply-automatic")
     if apply && appRunning() { throw MTVError.message("请先退出MTV再应用自动匹配，避免覆盖应用正在保存的资料。只读审计不需要退出。") }
     guard let source = try await LibrarySourceStore().load(), let path = source.path else { throw MTVError.message("当前没有本地来源；此工具不会自动连接NAS。") }
     let root = URL(fileURLWithPath: path)
-    guard let snapshot = try await LibraryIndexStore().load(root: root) else { throw MTVError.message("当前来源没有缓存索引。") }
+    let rescan = args.contains("--rescan")
+    let files: [MediaItem]
+    if rescan {
+      let scan = try LibraryScanner.scanResult(root: root)
+      guard !scan.limited else { throw MTVError.message("扫描超过上限，不能审计不完整清单。") }
+      files = scan.catalogItems()
+    } else {
+      guard let snapshot = try await LibraryIndexStore().load(root: root) else { throw MTVError.message("当前来源没有缓存索引。") }
+      files = snapshot.items
+    }
+    let basis = rescan ? "read-only-rescan" : "cached-index"
     let store = MetadataStore(), records = try store.load()
-    let before = LibraryInventoryReport(root: root, basis: "cached-index", files: snapshot.items, matches: records)
-    let targets = AutomaticMetadata.targets(files: snapshot.items, matches: records)
-    guard targets.count <= 64 else { throw MTVError.message("当前待识别内容超过64项，请分批整理后再审计。") }
+    let before = LibraryInventoryReport(root: root, basis: basis, files: files, matches: records)
+    let targets = AutomaticMetadata.targets(files: files, matches: records)
     let client = MetadataClient()
     let useSavedToken = args.contains("--use-saved-tmdb")
     let token = try useSavedToken ? MetadataTokenStore(defaults: UserDefaults(suiteName: "local.mtv.preview")!).load() : nil
     var rows: [[String: Any]] = [], ready: [(AutomaticMetadataTarget, MetadataCandidate)] = []
-    for target in targets {
-      var row: [String: Any] = ["targetID": target.id, "title": target.item.title, "kind": target.kind.rawValue, "provider": target.provider.rawValue]
+    for target in targets.dropFirst(offset).prefix(limit) {
+      var row: [String: Any] = ["targetID": target.id, "title": target.item.title, "kind": target.kind.rawValue]
       if target.kind == .movie && token == nil {
         // Credential access is explicit; never substitute another service.
         row["status"] = "movie-provider-credential-required"
       } else {
         do {
-          let candidates = try await client.search(query: target.item.title, kind: target.kind, provider: target.provider, token: target.provider == .tmdb ? token : nil)
-          row["candidateCount"] = candidates.count
-          if let selected = AutomaticMetadata.uniqueMatch(target: target, candidates: candidates) {
+          if let selected = try await AutomaticMetadata.resolve(target: target, client: client, token: token) {
             row["candidateTitle"] = selected.title; row["attribution"] = selected.attribution.absoluteString
-            row["status"] = selected.poster == nil ? "unique-match-without-artwork" : "ready"
-            if selected.poster != nil { ready.append((target, selected)) }
+            row["provider"] = selected.provider.rawValue
+            row["status"] = "ready"
+            ready.append((target, selected))
           } else { row["status"] = "no-unique-exact-match" }
         } catch { row["status"] = "lookup-failed"; row["error"] = error.localizedDescription }
         try await Task.sleep(for: .milliseconds(600))
@@ -110,11 +124,11 @@ import MTVCore
         if try store.insertAutomatic(targetID: target.id, candidate: selected) { added += 1 }
       }
     }
-    let after = LibraryInventoryReport(root: root, basis: "cached-index", files: snapshot.items, matches: try store.load())
-    var result: [String: Any] = ["schema": 1, "basis": "cached-index", "sourcePath": path,
+    let after = LibraryInventoryReport(root: root, basis: basis, files: files, matches: try store.load())
+    var result: [String: Any] = ["schema": 1, "basis": basis, "sourcePath": path,
       "summaryBefore": try object(before.summary), "summaryAfter": try object(after.summary), "rows": rows,
-      "readyMatches": ready.count, "addedMatches": added, "libraryModified": added > 0,
-      "credentialsRead": useSavedToken, "mediaOrNFOModified": false, "volumeReadVerified": false,
+      "eligibleTargets": targets.count, "offset": offset, "checkedTargets": rows.count, "readyMatches": ready.count, "addedMatches": added, "libraryModified": added > 0,
+      "credentialsRead": useSavedToken, "mediaOrNFOModified": false, "volumeReadVerified": rescan,
       "recognitionComplete": after.summary.missingPosters == 0 && after.checkPassed]
     if let backup { result["backupPath"] = backup.path }
     try output(result)

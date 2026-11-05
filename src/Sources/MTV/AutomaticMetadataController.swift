@@ -77,7 +77,7 @@ struct AutomaticMetadataResult: Identifiable {
     task = Task {
       var token = provided
       var credentialError: String?
-      if token == nil, targets.contains(where: { $0.kind == .movie }) {
+      if token == nil {
         do { token = try await Task.detached { try store.load() }.value } catch {
           credentialError = error.localizedDescription
         }
@@ -85,12 +85,7 @@ struct AutomaticMetadataResult: Identifiable {
       for (index, target) in targets.enumerated() {
         guard !Task.isCancelled, generation == attempt else { return }
         currentTitle = target.item.title
-        if target.kind == .movie, target.year == nil {
-          results.append(
-            AutomaticMetadataResult(item: target.item, outcome: "review", message: "电影年份缺失，请确认"))
-          continue
-        }
-        if target.provider == .tmdb, token == nil {
+        if target.kind == .movie, token == nil {
           results.append(
             AutomaticMetadataResult(
               item: target.item, outcome: "credentials", message: credentialError ?? "电影数据源尚未配置访问令牌"
@@ -99,16 +94,14 @@ struct AutomaticMetadataResult: Identifiable {
         }
         do {
           if index > 0 { try await Task.sleep(for: .milliseconds(550)) }
-          let values = try await client.search(
-            query: target.item.title, kind: target.kind, provider: target.provider,
-            token: target.provider == .tmdb ? token : nil)
+          let match = try await AutomaticMetadata.resolve(target: target, client: client, token: token)
           guard !Task.isCancelled, generation == attempt else { return }
-          if let candidate = AutomaticMetadata.uniqueMatch(target: target, candidates: values) {
+          if let candidate = match {
             let saved = try onMatch?(target.item, candidate) == true
             results.append(
               AutomaticMetadataResult(
                 item: target.item, outcome: saved ? "matched" : "skipped",
-                message: saved ? "片名与年份匹配，已补全" : "已有记录，保持原匹配"))
+                message: saved ? "已补全影片资料" : "已有记录，保持原匹配"))
           } else {
             results.append(
               AutomaticMetadataResult(

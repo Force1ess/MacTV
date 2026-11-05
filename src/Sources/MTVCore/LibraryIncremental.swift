@@ -50,7 +50,7 @@ public struct LibraryIncrementalState: Sendable {
 
 /// One shared stamp per dependency; records use integer references, never content hashes.
 final class LibraryIncrementalBuilder {
-  private static let metadataParserVersion = 6
+  private static let metadataParserVersion = 7
   private let root: URL
   private let boundary: String?
   private let previous: LibraryIncrementalState?
