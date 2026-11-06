@@ -6,7 +6,18 @@
 
 用遥控器或触控板浏览海报墙，播放硬盘与网盘里的影片，打开哔哩哔哩，再通过 Steam 等应用扩展你的客厅。
 
-![MacTV 大屏首页](docs/screenshots/home.zh-CN.png)
+<table>
+  <tr><th>影片海报墙</th><th>哔哩哔哩</th></tr>
+  <tr>
+    <td width="50%"><img src="docs/screenshots/library.png" alt="影片海报墙"></td>
+    <td width="50%"><img src="docs/screenshots/bilibili.png" alt="哔哩哔哩"></td>
+  </tr>
+  <tr><th>夸克网盘</th><th>播放界面</th></tr>
+  <tr>
+    <td width="50%"><img src="docs/screenshots/quark.png" alt="夸克网盘"></td>
+    <td width="50%"><img src="docs/screenshots/player.png" alt="播放界面"></td>
+  </tr>
+</table>
 
 [下载安装](https://github.com/Force1ess/MacTV/releases) · [开始使用](docs/GETTING-STARTED.zh-CN.md) · [反馈问题](https://github.com/Force1ess/MacTV/issues)
 

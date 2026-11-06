@@ -56,15 +56,18 @@ import MTVCore
 
   nonisolated private static func isDark(_ frame: CGImage) -> Bool {
     var pixels = [UInt8](repeating: 0, count: 8 * 8 * 4)
-    return pixels.withUnsafeMutableBytes { bytes in
+    return pixels.withUnsafeMutableBytes { (bytes: UnsafeMutableRawBufferPointer) -> Bool in
       guard let context = CGContext(data: bytes.baseAddress, width: 8, height: 8, bitsPerComponent: 8,
         bytesPerRow: 32, space: CGColorSpaceCreateDeviceRGB(),
         bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue) else { return false }
       context.draw(frame, in: CGRect(x: 0, y: 0, width: 8, height: 8))
       let rgba = bytes.bindMemory(to: UInt8.self)
-      return stride(from: 0, to: rgba.count, by: 4).allSatisfy {
-        max(rgba[$0], max(rgba[$0 + 1], rgba[$0 + 2])) < 24
+      for index in stride(from: 0, to: rgba.count, by: 4) {
+        if rgba[index] >= 24 || rgba[index + 1] >= 24 || rgba[index + 2] >= 24 {
+          return false
+        }
       }
+      return true
     }
   }
 }

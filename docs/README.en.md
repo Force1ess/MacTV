@@ -6,7 +6,18 @@
 
 Browse your poster wall with a remote or trackpad, play movies from disks and cloud storage, watch Bilibili, and bring photos and Steam to the same big-screen home.
 
-![MacTV home screen](screenshots/home.en.png)
+<table>
+  <tr><th>Poster wall</th><th>Bilibili</th></tr>
+  <tr>
+    <td width="50%"><img src="screenshots/library.png" alt="Poster wall"></td>
+    <td width="50%"><img src="screenshots/bilibili.png" alt="Bilibili"></td>
+  </tr>
+  <tr><th>Quark Drive</th><th>Playback</th></tr>
+  <tr>
+    <td width="50%"><img src="screenshots/quark.png" alt="Quark Drive"></td>
+    <td width="50%"><img src="screenshots/player.png" alt="Playback"></td>
+  </tr>
+</table>
 
 [Download](https://github.com/Force1ess/MacTV/releases) · [Get started](GETTING-STARTED.md) · [Report an issue](https://github.com/Force1ess/MacTV/issues)
 
