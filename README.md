@@ -37,6 +37,7 @@ MacTV 采用 [GPL-3.0](LICENSE)。[第三方说明](docs/THIRD-PARTY.zh-CN.md) �
 
 <!-- contributors:start -->
 <a href="https://github.com/Force1ess"><img src="https://github.com/Force1ess.png?size=64" width="48" height="48" alt="Force1ess" /></a>
+<a href="https://github.com/ImgBotApp"><img src="https://github.com/ImgBotApp.png?size=64" width="48" height="48" alt="ImgBotApp" /></a>
 <!-- contributors:end -->
 
 ## 星标历史

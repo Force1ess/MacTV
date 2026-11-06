@@ -37,6 +37,7 @@ MacTV is licensed under [GPL-3.0](../LICENSE). [Third-party notices](THIRD-PARTY
 
 <!-- contributors:start -->
 <a href="https://github.com/Force1ess"><img src="https://github.com/Force1ess.png?size=64" width="48" height="48" alt="Force1ess" /></a>
+<a href="https://github.com/ImgBotApp"><img src="https://github.com/ImgBotApp.png?size=64" width="48" height="48" alt="ImgBotApp" /></a>
 <!-- contributors:end -->
 
 ## Star History
