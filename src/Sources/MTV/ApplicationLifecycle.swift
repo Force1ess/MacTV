@@ -10,6 +10,7 @@ let launchLog = Logger(subsystem: "local.mtv.preview", category: "launch")
 @MainActor final class ApplicationLifecycle: NSObject, NSApplicationDelegate, NSWindowDelegate {
   let model = AppModel()
   private var mainWindow: NSWindow?
+  private var startupFullScreenPending = false
   private var control: AppControl?
   private var windowFocusObservers: [NSObjectProtocol] = []
   private var terminationSignal: DispatchSourceSignal?
@@ -34,6 +35,8 @@ let launchLog = Logger(subsystem: "local.mtv.preview", category: "launch")
         Task { @MainActor [weak self] in self?.refreshPlaybackCursor() }
       })
     }
+    startupFullScreenPending = !CommandLine.arguments.contains("--windowed")
+      && !CommandLine.arguments.contains("--ui-smoke")
     showMainWindow()
     do { try RuntimeTestGuard.startGuardian() }
     catch { launchLog.error("Interactive test guardian could not start"); NSApp.terminate(nil); return }
@@ -61,10 +64,6 @@ let launchLog = Logger(subsystem: "local.mtv.preview", category: "launch")
             // before requesting the final, immediately accepted termination.
             if RuntimeTestGuard.installed, RuntimeTestGuard.supervisor != nil { beginTermination() }
           }
-        } else if !CommandLine.arguments.contains("--windowed"),
-          !window.styleMask.contains(.fullScreen)
-        {
-          window.toggleFullScreen(nil)
         }
       }
     }
@@ -86,7 +85,13 @@ let launchLog = Logger(subsystem: "local.mtv.preview", category: "launch")
       window.isRestorable = false
       window.collectionBehavior.insert(.fullScreenPrimary)
       window.delegate = self
-      window.contentView = NSHostingView(rootView: RootView(model: model))
+      let hostingView = NSHostingView(rootView: RootView(model: model))
+      if #unavailable(macOS 26.0) {
+        // AppKit owns the window size on Sequoia. Avoid feeding SwiftUI's
+        // scroll content measurements back into the window during resizing.
+        hostingView.sizingOptions = []
+      }
+      window.contentView = hostingView
       window.center()
       mainWindow = window
     }
@@ -106,6 +111,17 @@ let launchLog = Logger(subsystem: "local.mtv.preview", category: "launch")
   private func refreshPlaybackCursor() {
     let playbackWindowIsKey = NSApp.isActive && NSApp.keyWindow?.identifier?.rawValue == "MTVMainWindow"
     TVPointerFocus.setPlaybackCursorHidden(playbackWindowIsKey && model.playbackPresented && !model.playerControlsVisible)
+  }
+  func windowDidUpdate(_ notification: Notification) {
+    guard startupFullScreenPending, let window = notification.object as? NSWindow,
+      window === mainWindow, window.isVisible else { return }
+    startupFullScreenPending = false
+    // Enter full screen outside the first window update (issue #2).
+    DispatchQueue.main.async { [weak self, weak window] in
+      guard let self, let window, !self.isTerminating, window.isVisible,
+        !window.styleMask.contains(.fullScreen) else { return }
+      window.toggleFullScreen(nil)
+    }
   }
   func windowWillClose(_ notification: Notification) { model.stopPlayback() }
   func applicationShouldTerminate(_ sender: NSApplication) -> NSApplication.TerminateReply {
