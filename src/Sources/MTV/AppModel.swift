@@ -41,6 +41,7 @@ struct LibraryScanObservation: Codable {
 
 @MainActor final class AppModel: ObservableObject {
   var mediaFocusLayout: MediaFocusLayout?
+  @Published var windowIsTransitioning = false
   let login = LoginController()
   let dictationKey = RemoteDictationKey()
   let externalApp = ExternalAppSession()
@@ -2764,7 +2765,8 @@ struct LibraryScanObservation: Codable {
         UserDefaults.standard.set(loudnessEqualization, forKey: "mtv.audio.loudnessEqualization")
       }
     case .metadata: prepareAutomaticMetadata()
-    case .fullscreen: NSApp.keyWindow?.toggleFullScreen(nil)
+    case .fullscreen:
+      windowIsTransitioning = true; NSApp.keyWindow?.toggleFullScreen(nil)
     case .accounts:
       for plugin in plugins where plugin.manifest.authentication != nil { login.refresh(plugin) }
       accountSettingsIndex = 0; accountSettingsVisible = true
