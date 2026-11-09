@@ -13,6 +13,8 @@ let launchLog = Logger(subsystem: "local.mtv.preview", category: "launch")
   private var startupFullScreenPending = false
   private var control: AppControl?
   private var windowFocusObservers: [NSObjectProtocol] = []
+  private var transitionObservers: [NSObjectProtocol] = []
+  private var pendingUngateUpdates = 0
   private var terminationSignal: DispatchSourceSignal?
   private var isTerminating = false
   private var readyToTerminate = false
@@ -85,6 +87,7 @@ let launchLog = Logger(subsystem: "local.mtv.preview", category: "launch")
       window.isRestorable = false
       window.collectionBehavior.insert(.fullScreenPrimary)
       window.delegate = self
+      observeFullScreenTransition(window)
       let hostingView = NSHostingView(rootView: RootView(model: model))
       if #unavailable(macOS 26.0) {
         // AppKit owns the window size on Sequoia. Avoid feeding SwiftUI's
@@ -98,6 +101,40 @@ let launchLog = Logger(subsystem: "local.mtv.preview", category: "launch")
     NSApp.setActivationPolicy(.regular)
     if CommandLine.arguments.contains("--background-recovery") { mainWindow?.orderFront(nil) }
     else { mainWindow?.makeKeyAndOrderFront(nil); NSApp.activate(ignoringOtherApps: true) }
+  }
+  /// AppKit livelocks its display cycle when a SwiftUI scroll view resizes its document
+  /// view on every pass of a fullscreen animation, so views gate on this flag. Delivery is
+  /// synchronous because the animation's first display pass must already see it, and the gate
+  /// lifts only after the transition's own display cycles are done.
+  private func observeFullScreenTransition(_ window: NSWindow) {
+    for name in [NSWindow.willEnterFullScreenNotification, NSWindow.willExitFullScreenNotification] {
+      transitionObservers.append(NotificationCenter.default.addObserver(
+        forName: name, object: window, queue: nil
+      ) { [weak self] _ in
+        MainActor.assumeIsolated {
+          self?.pendingUngateUpdates = 0
+          self?.model.windowIsTransitioning = true
+        }
+      })
+    }
+    for name in [NSWindow.didEnterFullScreenNotification, NSWindow.didExitFullScreenNotification] {
+      transitionObservers.append(NotificationCenter.default.addObserver(
+        forName: name, object: window, queue: nil
+      ) { [weak self] _ in
+        MainActor.assumeIsolated { self?.pendingUngateUpdates = 1 }
+      })
+    }
+    transitionObservers.append(NotificationCenter.default.addObserver(
+      forName: NSWindow.didUpdateNotification, object: window, queue: nil
+    ) { [weak self] _ in
+      MainActor.assumeIsolated {
+        guard let self, self.pendingUngateUpdates > 0 else { return }
+        self.pendingUngateUpdates += 1
+        guard self.pendingUngateUpdates > 2 else { return }
+        self.pendingUngateUpdates = 0
+        self.model.windowIsTransitioning = false
+      }
+    })
   }
   func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows flag: Bool) -> Bool
   {
@@ -120,6 +157,7 @@ let launchLog = Logger(subsystem: "local.mtv.preview", category: "launch")
     DispatchQueue.main.async { [weak self, weak window] in
       guard let self, let window, !self.isTerminating, window.isVisible,
         !window.styleMask.contains(.fullScreen) else { return }
+      model.windowIsTransitioning = true
       window.toggleFullScreen(nil)
     }
   }
@@ -135,8 +173,9 @@ let launchLog = Logger(subsystem: "local.mtv.preview", category: "launch")
   private func beginTermination() {
     guard !isTerminating else { return }
     isTerminating = true
-    for observer in windowFocusObservers { NotificationCenter.default.removeObserver(observer) }
+    for observer in windowFocusObservers + transitionObservers { NotificationCenter.default.removeObserver(observer) }
     windowFocusObservers.removeAll()
+    transitionObservers.removeAll()
     TVPointerFocus.setPlaybackCursorHidden(false)
     control?.stop(); control = nil
     Task {

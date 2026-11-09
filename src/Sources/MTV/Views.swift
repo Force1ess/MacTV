@@ -120,53 +120,57 @@ struct RootView: View {
               .padding(.horizontal, 64).padding(.bottom, 14).background(ink)
           }
           ScrollViewReader { scroll in
-            ScrollView {
-              VStack(alignment: .leading, spacing: model.section == .settings ? 24 : 40) {
-                if model.section == .home {
-                  hero.foregroundStyle(.white).frame(height: max(390, min(560, canvas.height * 0.54)))
-                    .padding(.horizontal, -64)
-                  appRow
-                  if !model.continueWatching.entries.isEmpty { ContinueWatchingRow(model: model) }
-                  if !model.watchlist.entries.isEmpty { SavedContentShelf(model: model, shelf: .watchlist) }
-                  if let error = model.watchlist.error {
-                    Label(L("待看片单暂不可用：") + error, systemImage: "exclamationmark.circle")
-                      .font(.system(size: 16)).foregroundStyle(.secondary)
+            // AppKit livelocks its display cycle when a scroll view resizes its document view
+            // on every pass of a fullscreen animation, so the scroll view stays absent until it ends.
+            if !model.windowIsTransitioning {
+              ScrollView {
+                VStack(alignment: .leading, spacing: model.section == .settings ? 24 : 40) {
+                  if model.section == .home {
+                    hero.foregroundStyle(.white).frame(height: max(390, min(560, canvas.height * 0.54)))
+                      .padding(.horizontal, -64)
+                    appRow
+                    if !model.continueWatching.entries.isEmpty { ContinueWatchingRow(model: model) }
+                    if !model.watchlist.entries.isEmpty { SavedContentShelf(model: model, shelf: .watchlist) }
+                    if let error = model.watchlist.error {
+                      Label(L("待看片单暂不可用：") + error, systemImage: "exclamationmark.circle")
+                        .font(.system(size: 16)).foregroundStyle(.secondary)
+                    }
+                    if let error = model.continueWatching.error {
+                      Label(L("继续观看暂不可用：") + error, systemImage: "exclamationmark.circle")
+                        .font(.system(size: 16)).foregroundStyle(.secondary)
+                    }
+                  } else {
+                    sectionHeading.padding(.top, model.section == .settings ? 0 : 30)
                   }
-                  if let error = model.continueWatching.error {
-                    Label(L("继续观看暂不可用：") + error, systemImage: "exclamationmark.circle")
-                      .font(.system(size: 16)).foregroundStyle(.secondary)
+                  if model.section == .home || model.section == .library || model.section == .bilibili
+                  {
+                    mediaGrid(width: canvas.width)
+                  } else if model.section == .extensions {
+                    extensions
+                  } else {
+                    settings
                   }
-                } else {
-                  sectionHeading.padding(.top, model.section == .settings ? 0 : 30)
-                }
-                if model.section == .home || model.section == .library || model.section == .bilibili
-                {
-                  mediaGrid(width: canvas.width)
-                } else if model.section == .extensions {
-                  extensions
-                } else {
-                  settings
-                }
-              }.padding(.horizontal, 64).padding(.bottom, 70).id("top")
-            }
-            .overlayPreferenceValue(MediaTitleAnchorKey.self) { anchors in
-              MediaFocusObserver(model: model, anchors: anchors).allowsHitTesting(false)
-            }
-            .onChange(of: canvas) { _, _ in
-              guard model.section != .settings, model.focus.row >= model.mediaFocusOffset else { return }
-              scroll.scrollTo("row-\(model.focus.row)", anchor: .center)
-            }
-            .onChange(of: model.focus.row) { _, row in
-              guard model.section != .settings else { return }
-              withAnimation(reduceMotion ? nil : .easeInOut(duration: 0.28)) {
-                let showHeading = row == 0 || (model.hasModuleSubnavigation && row < model.mediaFocusOffset)
-                scroll.scrollTo(showHeading ? "top" : "row-\(row)", anchor: showHeading || row == 1 ? .top : .center)
+                }.padding(.horizontal, 64).padding(.bottom, 70).id("top")
               }
-            }
-            .onChange(of: model.section) { _, _ in
-              if model.section == .settings { scroll.scrollTo("top", anchor: .top); return }
-              let row = model.focus.row
-              scroll.scrollTo(row == 0 ? "top" : "row-\(row)", anchor: row <= 1 ? .top : .center)
+              .overlayPreferenceValue(MediaTitleAnchorKey.self) { anchors in
+                MediaFocusObserver(model: model, anchors: anchors).allowsHitTesting(false)
+              }
+              .onChange(of: canvas) { _, _ in
+                guard model.section != .settings, model.focus.row >= model.mediaFocusOffset else { return }
+                scroll.scrollTo("row-\(model.focus.row)", anchor: .center)
+              }
+              .onChange(of: model.focus.row) { _, row in
+                guard model.section != .settings else { return }
+                withAnimation(reduceMotion ? nil : .easeInOut(duration: 0.28)) {
+                  let showHeading = row == 0 || (model.hasModuleSubnavigation && row < model.mediaFocusOffset)
+                  scroll.scrollTo(showHeading ? "top" : "row-\(row)", anchor: showHeading || row == 1 ? .top : .center)
+                }
+              }
+              .onChange(of: model.section) { _, _ in
+                if model.section == .settings { scroll.scrollTo("top", anchor: .top); return }
+                let row = model.focus.row
+                scroll.scrollTo(row == 0 ? "top" : "row-\(row)", anchor: row <= 1 ? .top : .center)
+              }
             }
           }
         }
